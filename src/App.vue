@@ -4,7 +4,9 @@
       <h1> simple flowchart</h1>
       <div class="tool-wrapper">
         <select v-model="newNodeType">
-          <option v-for="(item, index) in nodeCategory" :key="index" :value="index">{{item}}</option>
+          <option v-for="(item, index) in nodeCategory" :key="index" :value="index">
+            {{ item.name }}
+          </option>
         </select>
         <input type="text" v-model="newNodeLabel" placeholder="Input node label">
         <button @click="addNode">ADD</button>
@@ -52,6 +54,7 @@ export default {
             y: 10,
             type: 'Action',
             label: 'Hello, This is KR dev bot! How can I help you?',
+            stage: 0,
             isStart: true,
             buttons: [{
               id: 1,
@@ -70,6 +73,7 @@ export default {
             y: 100,
             type: 'Script',
             label: 'Do you have any symptoms described below such as cough, fever, etc?',
+            stage: 0,
             buttons: [{
               id: 1,
               text: 'Yes'
@@ -87,6 +91,7 @@ export default {
             y: 100,
             type: 'Rule',
             label: 'test3',
+            stage: 0,
           },
           {
             id: 4,
@@ -94,6 +99,7 @@ export default {
             y: 400,
             type: 'Rule',
             label: 'test4',
+            stage: 0,
           }
         ],
         links: [
@@ -131,14 +137,44 @@ export default {
       },
       newNodeType: 0,
       newNodeLabel: '',
-      nodeCategory:[
-        'rule',
-        'action',
-        'script',
-        'decision',
-        'fork',
-        'join',
+      nodeCategory: [
+        {
+          name: 'nodeType1',
+          stage: 0,
+        },
+        {
+          name: 'nodeType2',
+          stage: 0,
+        },
+        {
+          name: 'nodeType3',
+          stage: 1,
+        },
+        {
+          name: 'nodeType4',
+          stage: 2,
+        },
+        {
+          name: 'nodeType5',
+          stage: 3,
+        },
+        {
+          name: 'nodeType6',
+          stage: 4,
+        },
+        {
+          name: 'nodeType7',
+          stage: 5,
+        },
       ],
+      stages: {
+        0: 'stage1',
+        1: 'stage2',
+        2: 'stage3',
+        3: 'stage4',
+        4: 'stage5',
+        5: 'stage6',
+      },
     }
   },
   computed: {
@@ -159,14 +195,14 @@ export default {
       }))
       this.scene.nodes.push({
         id: maxID + 1,
-        x: 0,
+        x: this.nodeCategory[this.newNodeType].stage * 400 + 80,
         y: 50,
-        type: this.nodeCategory[this.newNodeType],
+        type: this.nodeCategory[this.newNodeType].name,
+        stage: this.nodeCategory[this.newNodeType].stage,
         label: this.newNodeLabel ? this.newNodeLabel: `test${maxID + 1}`,
       })
     },
-    onCreateNode({x, y, nodeType, label}) {
-
+    onCreateNode({x, y, nodeType, label, stage}) {
       let maxID = Math.max(0, ...this.scene.nodes.map((link) => {
         return link.id
       }))
@@ -175,7 +211,8 @@ export default {
         x: x,
         y,
         type: nodeType,
-        label: label,
+        label,
+        stage,
       })
     },
     nodeClick(id) {
@@ -203,7 +240,7 @@ export default {
   color: #2c3e50;
   margin: 0;
   overflow: hidden;
-  height: 1280px;
+  height: 95vh;
   .tool-wrapper {
     position: relative;
   }

@@ -6808,6 +6808,11 @@ vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "http://registry.npm.taobao.org/vue-template-es2015-compiler/download/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
 
+vue2-touch-events@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vue2-touch-events/-/vue2-touch-events-2.1.0.tgz#3d53e922ab1e65c5a6dcbc977c70f1fea368e821"
+  integrity sha512-RUoM0wB6xi5hbhIkngexREXrawX1jHup0sMFRb+WAWzT32cbjPBlRxDgk3pr0spBljyVXhwEjyqkLRRsMMi+VA==
+
 vue@^2.5.17:
   version "2.5.17"
   resolved "http://registry.npm.taobao.org/vue/download/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"

@@ -14,7 +14,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "vue2-touch-events": "^2.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0",

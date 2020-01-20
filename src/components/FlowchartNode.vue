@@ -1,13 +1,15 @@
 <template>
   <div class="flowchart-node" :style="nodeStyle" 
+    v-touch:start="handleMousedown"
+    v-touch:longtap="handleMouseDouble"
+    @dblclick="handleMouseDouble"
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
-    @mouseleave="handleMouseLeave"
     v-bind:class="{selected: options.selected === id}"
   >
     <div class="node-port node-input" :class="{ 'node-port-start': isStart }"
-      @mousedown="inputMouseDown"
       @mouseup="inputMouseUp"
+      @mousedown="inputMouseDown"
     ></div>
     <div :id="'node-main_' + id" class="node-main">
       <div v-if="isStart" :id="'node-main_' + id" class="node-start">
@@ -21,20 +23,15 @@
             <span>{{button.text}}</span>
             <div class="node-port node-output" :id="'port_' + id + '_' + index" :class="{ 'node-port-start': isStart }" 
               :style="buttonPortStyle(index)"
-              @mousedown="outputMouseDown"
-              @mousemove="outputMouseMoveFromButtonNode(index)"
-              @mouseup="outputMouseUp"
-              @mouseleave="outputMouseUp"
+              @mousedown="outputMouseDown(index, $event)"
             ></div>
           </div>
         </div>
       </div>
     </div>
     <div v-if="buttons.length === 0" :id="'node-output_' + id" class="node-port node-output" :class="{ 'node-port-start': isStart }"
-      @mousedown="outputMouseDown"
-      @mousemove="outputMouseMove"
-      @mouseleave="outputMouseUp"
-      @mouseup="outputMouseUp">
+      @mousedown="outputMouseDown(0, $event)"
+    >
     </div>
     <div v-show="show.delete" class="node-delete">&times;</div>
   </div>
@@ -179,7 +176,9 @@ export default {
       if (target.className.indexOf('node-input') < 0 && target.className.indexOf('node-output') < 0) {
         this.$emit('nodeSelected', e);
       }
-      e.preventDefault();
+      if (e.type.includes('mouse')) {
+        e.preventDefault();
+      }
     },
     handleMouseOver() {
       this.show.delete = true;
@@ -187,31 +186,43 @@ export default {
     handleMouseLeave() {
       this.show.delete = false;
     },
-    outputMouseDown(e) {
-      this.linkingStart = true;
-      e.preventDefault();
+    handleMouseDouble() {
+      return null
+    },
+    outputMouseDown(buttonIndex, e) {
+      e.buttonIndex = buttonIndex;
+      this.$emit('linkingStart', e)
+      if (e.type.includes('mouse')) {
+        e.preventDefault();
+      }
     },
     // eslint-disable-next-line
     outputMouseMove(e) {
-      if(this.linkingStart) {
+      if (this.linkingStart) {
         this.$emit('linkingStart')
       }
     },
-    outputMouseMoveFromButtonNode(buttonIndex) {
-      if(this.linkingStart) {
-        this.$emit('linkingStart', buttonIndex)
+    outputMouseMoveFromButtonNode(buttonIndex, e) {
+      if (this.linkingStart) {
+        this.$emit('linkingStart', buttonIndex, e)
       }
     },
     outputMouseUp(e) {
       this.linkingStart = false;
-      e.preventDefault();
+      if (e.type.includes('mouse')) {
+        e.preventDefault();
+      }
     },
     inputMouseDown(e) {
-      e.preventDefault();
+      if (e.type.includes('mouse')) {
+        e.preventDefault();
+      }
     },
     inputMouseUp(e) {
       this.$emit('linkingStop')
-      e.preventDefault();
+      if (e.type.includes('mouse')) {
+        e.preventDefault();
+      }
     },
   }
 }

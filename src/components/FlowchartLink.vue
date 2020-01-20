@@ -8,7 +8,7 @@
         :transform="arrowTransform"
         font-size="22">&times;</text>
     </a>
-    <path v-else d="M -1 -2 L 0 1 L 2 -1 z"
+    <path v-else d="M -1 -1 L 0 1 L 1 -1 z"
       :style="arrowStyle"
       :transform="arrowTransform"></path>
   </g>
@@ -88,7 +88,7 @@ export default {
     },
     dAttr() {
       let cx = this.start[0], cy = this.start[1], ex = this.end[0], ey = this.end[1];
-      let x1 = cx + 50, y1 = cy - 25, x2 = ex - 50, y2 = ey + 25;
+      let x1 = cx + 50, y1 = cy, x2 = ex - 50, y2 = ey;
       return `M ${cx}, ${cy} C ${x1}, ${y1}, ${x2}, ${y2}, ${ex}, ${ey}`;
     }
   }

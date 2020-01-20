@@ -1,8 +1,15 @@
 <template>
-  <div @mouseup="itemRelease" @mousemove="itemMove">
+  <div
+    v-touch:end="itemRelease"
+    v-touch:moving="itemMove"
+    @mouseup="itemRelease"
+    @mousemove="itemMove"
+  >
     <div id="flowchart" class="flowchart"   @dragstart="onDragStart">
       <div id="toolbar" class="flowchart-toolbar">
-        <div class="flowchart-toolbar-item" @mousedown="(e) => itemClick(e, 'Rule')">
+        <div class="flowchart-toolbar-item"
+          @mousedown="(e) => itemClick(e, 'Rule')"
+        >
           <div class="square" />
           <span>Rule</span>
         </div>
@@ -11,10 +18,11 @@
           <span>Action</span>
         </div>
       </div>
-      <div class="flowchart-container" 
-        @mousemove="handleMove" 
-        @mouseup="handleUp"
-        @mousedown="handleDown">
+      <div class="flowchart-container"
+        v-touch:moving="handleMove" 
+        v-touch:end="handleUp"
+        v-touch:start="handleDown"
+      >
         <flowchart-node
           v-bind.sync="node"
           :startNodeTitle.sync="scene.startNodeTitle"  
@@ -93,8 +101,19 @@ export default {
       moving: false,
       draggingNodeTop: 0,
       draggingNodeLeft: 0,
-      actionType: ''
+      actionType: '',
+      window: {
+        width: 0,
+        height: 0
+      },
     };
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleResize);
   },
   components: {
     FlowchartLink,
@@ -234,7 +253,7 @@ export default {
 
         buttonHeight += additionalHeight;
         // console.log({buttonIndex, buttonHeight, first: buttonHeight, second: labelHeight + 41 * (buttonIndex + 0.5 - node.buttons.length)})
-        return [x + labelWidth, y + buttonHeight];
+        return [x + labelWidth, y + buttonHeight - 40];
         // return [x + labelWidth, y + labelHeight + 41 * (buttonIndex + 0.5 - node.buttons.length)]
       }
       else if (type === 'left') {
@@ -249,13 +268,19 @@ export default {
       // }
       // ==========================================
     },
-    linkingStart(nodeId, buttonIndex) {
+    linkingStart(nodeId, e) {
       this.action.linking = true;
+      let mx, my = null
+      if (e.type.includes('mouse')) {
+        [mx, my] = getMousePosition(this.$el, e);
+      } else {
+        [mx, my] = getMousePosition(this.$el, e);
+      }
       this.draggingLink = {
         from: nodeId,
-        buttonIndex,
-        mx: null,
-        my: null,
+        buttonIndex: e.buttonIndex,
+        mx,
+        my,
       };
     },
     linkingStop(index) {
@@ -298,14 +323,24 @@ export default {
       this.action.dragging = id;
       this.action.selected = id;
       this.$emit('nodeClick', id);
-      this.mouse.lastX = e.pageX || e.clientX + document.documentElement.scrollLeft
-      this.mouse.lastY = e.pageY || e.clientY + document.documentElement.scrollTop
+      if (e.type.includes('mouse')) {
+        this.mouse.lastX = e.pageX || e.clientX + document.documentElement.scrollLeft
+        this.mouse.lastY = e.pageY || e.clientY + document.documentElement.scrollTop
+      } else {
+        this.mouse.lastX = e.touches[0].pageX || e.touches[0].clientX + document.documentElement.scrollLeft
+        this.mouse.lastY = e.touches[0].pageY || e.touches[0].clientY + document.documentElement.scrollTop
+      }
     },
     handleMove(e) {
       if (this.action.linking) {
         [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-        this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft;
-        this.mouse.y = e.pageY || e.clientY + document.documentElement.scrollTop;
+        if (e.type.includes('mouse')) {
+          this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft
+          this.mouse.y = e.pageY || e.clientY + document.documentElement.scrollTop
+        } else {
+          this.mouse.x = e.touches[0].pageX || e.touches[0].clientX + document.documentElement.scrollLeft
+          this.mouse.y = e.touches[0].pageY || e.touches[0].clientY + document.documentElement.scrollTop
+        }
 
         const toolbarWidth = document.getElementById("toolbar").offsetWidth;
         const titleHeight = document.getElementById("title").offsetHeight + 22;
@@ -313,8 +348,13 @@ export default {
         [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x - toolbarWidth, this.mouse.y - titleHeight];
       }
       if (this.action.dragging) {
-        this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft
-        this.mouse.y = e.pageY || e.clientY + document.documentElement.scrollTop
+        if (e.type.includes('mouse')) {
+          this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft
+          this.mouse.y = e.pageY || e.clientY + document.documentElement.scrollTop
+        } else {
+          this.mouse.x = e.touches[0].pageX || e.touches[0].clientX + document.documentElement.scrollLeft
+          this.mouse.y = e.touches[0].pageY || e.touches[0].clientY + document.documentElement.scrollTop
+        }
         let diffX = this.mouse.x - this.mouse.lastX;
         let diffY = this.mouse.y - this.mouse.lastY;
 
@@ -362,7 +402,7 @@ export default {
     handleDown(e) {
       const target = e.target || e.srcElement;
       // console.log('for scroll', target, e.keyCode, e.which)
-      if ((target === this.$el || target.matches('svg, svg *')) && e.which === 1) {
+      if (target === this.$el || target.matches('svg, svg *')) {
         this.action.scrolling = true;
         [this.mouse.lastX, this.mouse.lastY] = getMousePosition(this.$el, e);
         this.action.selected = null; // deselectAll
@@ -375,6 +415,8 @@ export default {
       })
       let left = (this.scene.nodes[index].centeredX || this.scene.nodes[index].x) + dx / this.scene.scale;
       let top = (this.scene.nodes[index].centeredY || this.scene.nodes[index].y) + dy / this.scene.scale;
+      left = Math.min(left, (this.scene.nodes[index].stage + 1) * 200);
+      left = Math.max(left, this.scene.nodes[index].stage * 200 + 80);
       this.$set(this.scene.nodes, index, Object.assign(this.scene.nodes[index], {
         x: left,
         y: top,
@@ -403,7 +445,7 @@ export default {
       return false;
     },
     itemMove(e) {
-      if(this.moving) {
+      if (this.moving) {
         [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
 
         this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft
@@ -422,7 +464,7 @@ export default {
     },
     // eslint-disable-next-line
     itemRelease(e) {
-      if(this.moving) {
+      if (this.moving) {
       this.moving = false;
 
       const toolbarWidth = document.getElementById("toolbar").clientWidth + 10;
@@ -431,9 +473,13 @@ export default {
       const y = this.draggingNodeTop - titleHeight;
       const x = this.draggingNodeLeft - toolbarWidth;
 
-      this.$emit('onDropNewNode', { x, y, nodeType : this.actionType, label: 'New Rule' });
+      this.$emit('onDropNewNode', { x, y, nodeType : this.actionType, label: 'New Rule', stage: 0});
       }
-    }
+    },
+    handleResize() {
+      this.window.width = window.innerWidth;
+      this.window.height = window.innerHeight;
+    },
   },
 }
 </script>
