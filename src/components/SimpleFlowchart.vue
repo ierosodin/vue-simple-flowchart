@@ -1,23 +1,6 @@
 <template>
-  <div
-    v-touch:end="itemRelease"
-    v-touch:moving="itemMove"
-    @mouseup="itemRelease"
-    @mousemove="itemMove"
-  >
-    <div id="flowchart" class="flowchart"   @dragstart="onDragStart">
-      <div id="toolbar" class="flowchart-toolbar">
-        <div class="flowchart-toolbar-item"
-          @mousedown="(e) => itemClick(e, 'Rule')"
-        >
-          <div class="square" />
-          <span>Rule</span>
-        </div>
-        <div class="flowchart-toolbar-item" @mousedown="(e) => itemClick(e, 'Action')">
-          <div class="square" />
-          <span>Action</span>
-        </div>
-      </div>
+  <div>
+    <div id="flowchart" class="flowchart">
       <div class="flowchart-container"
         v-touch:moving="handleMove" 
         v-touch:end="handleUp"
@@ -142,11 +125,11 @@ export default {
         const toNode = this.findNodeWithID(link.to)
         let x, y, cy, cx, ex, ey;
 
-        x = this.scene.centerX + (fromNode.centeredX || fromNode.x);
-        y = this.scene.centerY + (fromNode.centeredY || fromNode.y);
+        x = (fromNode.centeredX || fromNode.x);
+        y = (fromNode.centeredY || fromNode.y);
         [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, link.button);
-        x = this.scene.centerX + (toNode.centeredX || toNode.x);
-        y = this.scene.centerY + (toNode.centeredY || toNode.y);
+        x = (toNode.centeredX || toNode.x);
+        y = (toNode.centeredY || toNode.y);
         [ex, ey] = this.getPortPosition(toNode, 'left', x, y);
         return { 
           start: [cx, cy], 
@@ -157,9 +140,9 @@ export default {
       if (this.draggingLink) {
         let x, y, cy, cx;
         const fromNode = this.findNodeWithID(this.draggingLink.from);
-        x = this.scene.centerX + (fromNode.centeredX || fromNode.x);
-        y = this.scene.centerY + (fromNode.centeredY || fromNode.y);
-        [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, -1);
+        x = (fromNode.centeredX || fromNode.x);
+        y = (fromNode.centeredY || fromNode.y);
+        [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, this.draggingLink.buttonIndex + 1);
         // push temp dragging link, mouse cursor postion = link end postion 
         lines.push({ 
           start: [cx, cy],
@@ -174,28 +157,13 @@ export default {
       })
     },
     getPortPosition(node, type, x, y, buttonId) {
-      // const nodeTypeElement = document.getElementById('node-type_' + id);
       const labelElement = document.getElementById('node-main_' + node.id);
-      // const nodeButtonsElement = document.getElementById('node-buttons_' + id);
-      // let nodeTypeHeight = 0;
-          // nodeTypeWidth = 0;
-      // if (nodeTypeElement) {
-      //   nodeTypeHeight = nodeTypeElement.offsetHeight;
-        // nodeTypeWidth = nodeTypeElement.offsetWidth;
-      // }
       let labelHeight = 0,
           labelWidth = 0;
       if (labelElement) {
         labelHeight = labelElement.offsetHeight;
         labelWidth = labelElement.offsetWidth;
       }
-      // let buttonsHeight = 0;
-          // buttonsWidth = 0;
-      // if (nodeButtonsElement) {
-      //   buttonsHeight = nodeButtonsElement.offsetHeight;
-        // buttonsWidth = nodeButtonsElement.offsetWidth;
-      // }
-      // check if start node, then add margin top by 50px (manually)
       let additionalHeight = 0;
       if(node.isStart) {
         const nodeStartTitleElement = document.getElementsByClassName('node-start')[0];
@@ -210,9 +178,6 @@ export default {
         } else {
             if (buttonId === -1 && this.draggingLink && this.draggingLink.buttonIndex !== undefined) { // this line is important! -1 means the condition is in dragginglink
             buttonIndex = this.draggingLink.buttonIndex;
-            // console.log({selected: this.draggingLink})
-            // console.log({node, buttons: node.buttons})
-            // return [x + labelWidth, y + labelHeight + 41 * (buttonIndex + 0.5 - node.buttons.length)]
           } else {
             return [x + labelWidth, y + labelHeight/2 + additionalHeight/2]
           }
@@ -224,49 +189,27 @@ export default {
         const labelTitleElement = document.getElementById(`label-title_${node.id}`);
         if (!labelTitleElement) { return [0, 0]; }
 
-        // if (nodeTypeElement && labelTitleElement) {
-        //   console.log({nodeTypeElement, labelTitleElement})
-        // }
         const nodeTypeHeight = nodeTypeElement.offsetHeight;
         const labelTitleHeight = labelTitleElement.offsetHeight;
-        // console.log({nodeTypeHeight, labelTitleHeight})
         let buttonHeight = labelTitleHeight + nodeTypeHeight;
 
         let element = null;
         for (let i = buttonIndex; i >= 0; i--) {
-          // console.log({i, buttonHeight, additionalHeight})
           element = document.getElementById('button_' + node.id + '_' + i);
-          // if (element) {
-          //   console.log({element});
-          // }
-          // const elementHeight = element.offsetHeight;
-          // console.log({elementHeight})
-          if(!element) { continue; }
-          // console.log({first: buttonHeight});
-          if(i === buttonIndex) {
+          if (!element) { continue; }
+          if (i === buttonIndex) {
             buttonHeight += element.offsetHeight/1.75;
           } else {
             buttonHeight += element.offsetHeight;
           }
-          // console.log({second: buttonHeight});
         }
 
         buttonHeight += additionalHeight;
-        // console.log({buttonIndex, buttonHeight, first: buttonHeight, second: labelHeight + 41 * (buttonIndex + 0.5 - node.buttons.length)})
-        return [x + labelWidth, y + buttonHeight - 40];
-        // return [x + labelWidth, y + labelHeight + 41 * (buttonIndex + 0.5 - node.buttons.length)]
+        return [x + labelWidth, y + buttonHeight];
       }
       else if (type === 'left') {
         return [x, y + labelHeight/2 + additionalHeight/2]
       }
-      // NOT USED YET =============================
-      // if (type === 'top') {
-      //   return [x + 40, y];
-      // }
-      // else if (type === 'bottom') {
-      //   return [x + 40, y + 80];
-      // }
-      // ==========================================
     },
     linkingStart(nodeId, e) {
       this.action.linking = true;
@@ -342,10 +285,8 @@ export default {
           this.mouse.y = e.touches[0].pageY || e.touches[0].clientY + document.documentElement.scrollTop
         }
 
-        const toolbarWidth = document.getElementById("toolbar").offsetWidth;
         const titleHeight = document.getElementById("title").offsetHeight + 22;
-
-        [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x - toolbarWidth, this.mouse.y - titleHeight];
+        [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x, this.mouse.y - titleHeight];
       }
       if (this.action.dragging) {
         if (e.type.includes('mouse')) {
@@ -370,13 +311,13 @@ export default {
         this.mouse.lastX = this.mouse.x;
         this.mouse.lastY = this.mouse.y;
 
-        this.scene.centerX = diffX;
-        this.scene.centerY = diffY;
+        this.scene.centerX += diffX;
+        this.scene.centerY += diffY;
 
         this.scene.nodes = this.scene.nodes.map((node) => ({
           ...node,
           centeredX: (node.centeredX || node.x) + diffX,
-          centeredY: (node.centeredY || node.y) + diffY
+          centeredY: (node.centeredY || node.y) + diffY,
         }))
 
         // this.hasDragged = true
@@ -415,8 +356,8 @@ export default {
       })
       let left = (this.scene.nodes[index].centeredX || this.scene.nodes[index].x) + dx / this.scene.scale;
       let top = (this.scene.nodes[index].centeredY || this.scene.nodes[index].y) + dy / this.scene.scale;
-      left = Math.min(left, (this.scene.nodes[index].stage + 1) * 200);
-      left = Math.max(left, this.scene.nodes[index].stage * 200 + 80);
+      left = Math.min(left, this.scene.centerX + (this.scene.nodes[index].stage + 1) * 500 - 200);
+      left = Math.max(left, this.scene.centerX + this.scene.nodes[index].stage * 500);
       this.$set(this.scene.nodes, index, Object.assign(this.scene.nodes[index], {
         x: left,
         y: top,
@@ -432,49 +373,6 @@ export default {
         return link.from !== id && link.to !== id
       })
       this.$emit('nodeDelete', id)
-    },
-    onDragStart() {
-      return false;
-    },
-    itemClick(e, action) {
-      this.moving = true;
-      this.actionType = action;
-      this.draggingNodeTop = -100;
-      this.draggingNodeLeft = -100;
-      e.returnValue=false;
-      return false;
-    },
-    itemMove(e) {
-      if (this.moving) {
-        [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-
-        this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft
-        this.mouse.y = e.pageY || e.clientY + document.documentElement.scrollTop
-        let diffX = this.mouse.x;
-        let diffY = this.mouse.y;
-
-        diffX = diffX / this.scene.scale
-        diffY = diffY / this.scene.scale
-
-        this.draggingNodeTop = diffY - 40 ;
-        this.draggingNodeLeft = diffX - 40 ;
-
-        return false;
-      }
-    },
-    // eslint-disable-next-line
-    itemRelease(e) {
-      if (this.moving) {
-      this.moving = false;
-
-      const toolbarWidth = document.getElementById("toolbar").clientWidth + 10;
-      const titleHeight = document.getElementById("title").clientHeight;
-
-      const y = this.draggingNodeTop - titleHeight;
-      const x = this.draggingNodeLeft - toolbarWidth;
-
-      this.$emit('onDropNewNode', { x, y, nodeType : this.actionType, label: 'New Rule', stage: 0});
-      }
     },
     handleResize() {
       this.window.width = window.innerWidth;

@@ -44,7 +44,7 @@ export default {
       isPanelShow: false,
       scene: {
         startNodeTitle: 'Conversation Start',
-        centerX: 0,
+        centerX: 50,
         centerY: 0,
         scale: 1,
         nodes: [
@@ -149,6 +149,16 @@ export default {
         {
           name: 'nodeType3',
           stage: 1,
+          buttons: [{
+            id: 1,
+            text: 'Option 1'
+          }, {
+            id: 2,
+            text: 'Option 2'
+          }, {
+            id: 3,
+            text: 'Option 3'
+          }]
         },
         {
           name: 'nodeType4',
@@ -200,6 +210,7 @@ export default {
         type: this.nodeCategory[this.newNodeType].name,
         stage: this.nodeCategory[this.newNodeType].stage,
         label: this.newNodeLabel ? this.newNodeLabel: `test${maxID + 1}`,
+        buttons: this.nodeCategory[this.newNodeType].buttons,
       })
     },
     onCreateNode({x, y, nodeType, label, stage}) {

@@ -5,6 +5,7 @@
     @dblclick="handleMouseDouble"
     @mousedown="handleMousedown"
     @mouseover="handleMouseOver"
+    @mouseleave="handleMouseLeave"
     v-bind:class="{selected: options.selected === id}"
   >
     <div class="node-port node-input" :class="{ 'node-port-start': isStart }"
@@ -30,7 +31,7 @@
       </div>
     </div>
     <div v-if="buttons.length === 0" :id="'node-output_' + id" class="node-port node-output" :class="{ 'node-port-start': isStart }"
-      @mousedown="outputMouseDown(0, $event)"
+      @mousedown="outputMouseDown(-1, $event)"
     >
     </div>
     <div v-show="show.delete" class="node-delete">&times;</div>
@@ -235,7 +236,7 @@ $portSize: 16;
 
 .flowchart-node {
   margin: 0;
-  width: 250px;
+  width: 200px;
   position: absolute;
   box-sizing: border-box;
   border: none;
