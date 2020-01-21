@@ -253,24 +253,22 @@ export default {
       // add new Link
       if (this.draggingLink && this.draggingLink.from !== index) {
         // check link existence
-        const existed = this.scene.links.find((link) => {
-          return link.from === this.draggingLink.from && (link.button ? link.button === this.findNodeWithID(link.from).buttons[this.draggingLink.buttonIndex].id : true);
-        })
-        if (!existed) {
-          let maxID = Math.max(0, ...this.scene.links.map((link) => {
-            return link.id
-          }))
-          const fromNode = this.findNodeWithID(this.draggingLink.from);
-          const outputButtonId = fromNode.buttons && fromNode.buttons.length ? fromNode.buttons[this.draggingLink.buttonIndex].id : undefined;
-          const newLink = {
-            id: maxID + 1,
-            from: this.draggingLink.from,
-            to: index,
-            button: outputButtonId,
-          };
-          this.scene.links.push(newLink)
-          this.$emit('linkAdded', newLink)
-        }
+        // const existed = this.scene.links.find((link) => {
+        //   return link.from === this.draggingLink.from && (link.button ? link.button === this.findNodeWithID(link.from).buttons[this.draggingLink.buttonIndex].id : true);
+        // })
+        let maxID = Math.max(0, ...this.scene.links.map((link) => {
+          return link.id
+        }))
+        const fromNode = this.findNodeWithID(this.draggingLink.from);
+        const outputButtonId = fromNode.buttons && fromNode.buttons.length ? fromNode.buttons[this.draggingLink.buttonIndex].id : undefined;
+        const newLink = {
+          id: maxID + 1,
+          from: this.draggingLink.from,
+          to: index,
+          button: outputButtonId,
+        };
+        this.scene.links.push(newLink)
+        this.$emit('linkAdded', newLink)
       }
       this.draggingLink = null
     },
