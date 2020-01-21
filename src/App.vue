@@ -160,7 +160,7 @@ export default {
         4: 'stage5',
         5: 'stage6',
       },
-      stageWidth: 500,
+      stageWidth: 700,
     }
   },
   computed: {

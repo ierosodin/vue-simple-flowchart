@@ -271,7 +271,7 @@ $portSize: 16;
     .node-error {
       margin: 0 auto;
       background: #ff0000;
-      opacity: 0.7;
+      opacity: 0.9;
       padding: 6px;
       width: 200px;
       border-radius: 4px;
@@ -285,7 +285,7 @@ $portSize: 16;
     .node-warning {
       margin: 0 auto;
       background: #ffcc00;
-      opacity: 0.7;
+      opacity: 0.9;
       padding: 6px;
       width: 200px;
       border-radius: 4px;
@@ -299,7 +299,7 @@ $portSize: 16;
     .node-success {
       margin: 0 auto;
       background: #00ff00;
-      opacity: 0.7;
+      opacity: 0.9;
       padding: 6px;
       width: 200px;
       border-radius: 4px;
