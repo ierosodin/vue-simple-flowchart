@@ -278,7 +278,7 @@ $portSize: 16;
       position: relative;
       span {
         color: #FFF;
-        font-size: 14px;
+        font-size: 20px;
         font-weight: 600;
       }
     }
@@ -292,7 +292,7 @@ $portSize: 16;
       position: relative;
       span {
         color: #FFF;
-        font-size: 14px;
+        font-size: 20px;
         font-weight: 600;
       }
     }
@@ -306,7 +306,7 @@ $portSize: 16;
       position: relative;
       span {
         color: #FFF;
-        font-size: 14px;
+        font-size: 20px;
         font-weight: 600;
       }
     }
@@ -318,19 +318,19 @@ $portSize: 16;
       border-bottom-left-radius: 0px;
       border-bottom-right-radius: 0px;
       color: black;
-      font-size: 16px;
+      font-size: 24px;
       font-weight: 600;
       padding: 6px;
     }
     .node-label {
-      font-size: 14px;
+      font-size: 20px;
       background: #FFF;
       border: 2px solid #e0e6ed;
 
       .node-label-title{
         border-radius: 4px;
         background: #FFF;
-        padding: 16px;
+        padding: 4px;
       }
       .node-label-button {
         border: 1px solid #dfdfdf;

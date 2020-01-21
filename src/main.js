@@ -6,6 +6,11 @@ import {
     PopoverPlugin, NavbarPlugin,
 } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+    faArrowRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import App from './App.vue'
 
 Vue.config.productionTip = false
@@ -22,6 +27,9 @@ Vue.use(ModalPlugin);
 Vue.use(PopoverPlugin);
 Vue.use(NavbarPlugin);
 Vue.use(Vue2TouchEvents)
+
+library.add(faArrowRight);
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 new Vue({
   render: h => h(App)

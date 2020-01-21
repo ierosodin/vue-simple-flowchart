@@ -8,23 +8,32 @@
         <div v-html="isRawScene ? rawScene : prettyScene" class="extraction-panel" />
       </div>
     </div>
-    
-    <svg width="100%" height="10vh">
-      <a
-        href="#"
-        v-for="(stage, index) in stages"
-        :key="index"
-        @click="newStageType=index; $bvModal.show('createModal')"
-      >
-        <rect :x="20 + index * 90" y="10" width="80" height="50"
-          stroke-dasharray="5, 5"
-          style="stroke: black; stroke-width: 2; fill-opacity: 0; stroke-opacity:0.6" />
-        <text :x="30 + index * 90" y="40" textLength="60" lengthAdjust="spacing">
-          {{ stage }}
-        </text>
-      </a>
-    </svg>
+    <br>
     <div class="flowchart">
+      <b-row>
+        <b-col
+          v-for="(stage, index) in stages"
+          :key="index"
+          class="col-5 col-lg-2 col-md-3 col-sm-4"
+        >
+          <span>
+            <b-button
+              variant="outline-dark"
+              size="lg"
+              @click="newStageType=index; $bvModal.show('createModal')"
+            >
+              {{ stage }}
+            </b-button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <font-awesome-icon
+              class="faWidth"
+              v-if="parseInt(index) + 1 < Object.keys(stages).length"
+              :icon="['fas', 'arrow-right']"
+              size="lg"
+            />
+          </span>
+        </b-col>
+      </b-row>
       <b-row align-h="end">
         <b-col sm="1">
           <label>Scale:</label>
@@ -160,7 +169,7 @@ export default {
         4: 'stage5',
         5: 'stage6',
       },
-      stageWidth: 700,
+      stageWidth: 600,
     }
   },
   computed: {
@@ -253,6 +262,9 @@ export default {
   }
   .flowchart {
     max-height: 70vh;
+  }
+  .faWidth {
+    transform: scale(1.5,1);
   }
 }
 </style>

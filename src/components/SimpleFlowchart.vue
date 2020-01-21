@@ -264,7 +264,14 @@ export default {
             link.to === index &&
             (link.button ? link.button === this.findNodeWithID(link.from).buttons[this.draggingLink.buttonIndex].id : true);
         })
-        if (!existed) {
+        const nodeFrom = this.scene.nodes.find((node) => {
+          return node.id === this.draggingLink.from;
+        })
+        const nodeTo = this.scene.nodes.find((node) => {
+          return node.id === index;
+        })
+        const valid = nodeFrom.stage <= nodeTo.stage;
+        if (!existed && valid) {
           let maxID = Math.max(0, ...this.scene.links.map((link) => {
             return link.id
           }))
@@ -317,7 +324,7 @@ export default {
         }
 
         const scrollY = document.getElementById("app").scrollTop;
-        const titleHeight = document.getElementById("title").offsetHeight + 22 + 75;
+        const titleHeight = document.getElementById("title").offsetHeight + 22 + 78;
         [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x, this.mouse.y - titleHeight + scrollY];
       }
       if (this.action.dragging) {
