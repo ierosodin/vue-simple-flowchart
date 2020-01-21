@@ -234,7 +234,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$themeColor: rgb(255, 136, 85);
+$themeColor: rgb(120, 120, 120);
 $portSize: 16;
 
 .flowchart-node {
@@ -292,8 +292,9 @@ $portSize: 16;
       }
     }
     .node-type {
-      background: #fff7e2;
-      border: 2px solid #fee196;
+      background: #ccccb3;
+      opacity: 0.7;
+      border: 2px solid #ffffff;
       border-radius: 6px;
       border-bottom-left-radius: 0px;
       border-bottom-right-radius: 0px;
