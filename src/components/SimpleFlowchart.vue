@@ -24,9 +24,9 @@
           <line
             v-for="(stage, index) in stages"
             :key="'line-' + index"
-            :x1="scene.centerX + index * stageWidth"
+            :x1="(scene.centerX + index * stageWidth) * scene.scale"
             y1="0"
-            :x2="scene.centerX + index * stageWidth"
+            :x2="(scene.centerX + index * stageWidth) * scene.scale"
             y2="100vh"
             style="stroke: rgb(100, 100, 100); stroke-width: 2"
             stroke-dasharray="5, 5"
@@ -34,7 +34,7 @@
           <text
             v-for="(stage, index) in stages"
             :key="'text-' + index"
-            :x="scene.centerX + index * stageWidth + 50"
+            :x="(scene.centerX + index * stageWidth + 50) * scene.scale"
             y="50"
             textLength="100"
             lengthAdjust="spacing"
@@ -200,7 +200,7 @@ export default {
             if (buttonId === -1 && this.draggingLink && this.draggingLink.buttonIndex !== undefined) { // this line is important! -1 means the condition is in dragginglink
             buttonIndex = this.draggingLink.buttonIndex;
           } else {
-            return [x + labelWidth, y + labelHeight/2 + additionalHeight/2]
+            return [(x + labelWidth) * this.scene.scale, (y + labelHeight/2 + additionalHeight/2) * this.scene.scale]
           }
         }
 
@@ -226,10 +226,10 @@ export default {
         }
 
         buttonHeight += additionalHeight;
-        return [x + labelWidth, y + buttonHeight];
+        return [(x + labelWidth) * this.scene.scale, (y + buttonHeight) * this.scene.scale];
       }
       else if (type === 'left') {
-        return [x, y + labelHeight/2 + additionalHeight/2]
+        return [(x) * this.scene.scale, (y + labelHeight/2 + additionalHeight/2) * this.scene.scale]
       }
     },
     linkingStart(nodeId, e) {
@@ -308,8 +308,9 @@ export default {
           this.mouse.y = e.touches[0].pageY || e.touches[0].clientY + document.documentElement.scrollTop
         }
 
-        const titleHeight = document.getElementById("title").offsetHeight + 22 + 45;
-        [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x, this.mouse.y - titleHeight];
+        const scrollY = document.getElementById("app").scrollTop;
+        const titleHeight = document.getElementById("title").offsetHeight + 22 + 75;
+        [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x, this.mouse.y - titleHeight + scrollY];
       }
       if (this.action.dragging) {
         if (e.type.includes('mouse')) {
@@ -415,6 +416,8 @@ export default {
   justify-content: flex-start;
   align-items: flex-start;
   flex: 1;
+  max-height: 80vh;
+  overflow-y: hidden;
 }
 .flowchart-container {
   flex: 1;

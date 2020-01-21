@@ -24,15 +24,25 @@
         </text>
       </a>
     </svg>
-    <simple-flowchart :scene.sync="scene" 
-      @nodeClick="nodeClick"
-      @nodeDelete="nodeDelete"
-      @linkBreak="linkBreak"
-      @linkAdded="linkAdded"
-      @canvasClick="canvasClick"
-      :stages="stages"
-      :stageWidth="stageWidth"
-      :height="800"/>
+    <div class="flowchart">
+      <b-row align-h="end">
+        <b-col sm="1">
+          <label>Scale:</label>
+        </b-col>
+        <b-col sm="3">
+          <b-form-input type="range" v-model="scene.scale" min=0 max=1 step=0.1></b-form-input>
+        </b-col>
+      </b-row>
+      <simple-flowchart :scene.sync="scene" 
+        @nodeClick="nodeClick"
+        @nodeDelete="nodeDelete"
+        @linkBreak="linkBreak"
+        @linkAdded="linkAdded"
+        @canvasClick="canvasClick"
+        :stages="stages"
+        :stageWidth="stageWidth"
+        :height="1200"/>
+    </div>
     <b-modal
       id="createModal"
       ref="createModal"
@@ -219,8 +229,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin: 0;
-  overflow: hidden;
-  height: 95vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100vh;
   .tool-wrapper {
     position: relative;
   }
@@ -239,6 +250,9 @@ export default {
     border-color: grey;
     border-radius: 10px;
     overflow: scroll;
+  }
+  .flowchart {
+    max-height: 70vh;
   }
 }
 </style>
