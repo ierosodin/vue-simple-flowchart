@@ -24,6 +24,8 @@
       @linkBreak="linkBreak"
       @linkAdded="linkAdded"
       @canvasClick="canvasClick"
+      :stages="stages"
+      :stageWidth="stageWidth"
       :height="800"/>
   </div>
 </template>
@@ -99,6 +101,7 @@ export default {
         4: 'stage5',
         5: 'stage6',
       },
+      stageWidth: 500,
     }
   },
   computed: {
@@ -119,7 +122,7 @@ export default {
       }))
       this.scene.nodes.push({
         id: maxID + 1,
-        x: this.scene.centerX + this.nodeCategory[this.newNodeType].stage * 500,
+        x: this.scene.centerX + this.nodeCategory[this.newNodeType].stage * this.stageWidth,
         y: this.scene.centerY + 50,
         type: this.nodeCategory[this.newNodeType].name,
         stage: this.nodeCategory[this.newNodeType].stage,

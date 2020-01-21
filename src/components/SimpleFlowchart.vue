@@ -22,6 +22,27 @@
             :key="`link${index}`"
             @deleteLink="linkDelete(link.id)">
           </flowchart-link>
+          <line
+            v-for="(stage, index) in stages"
+            :key="index"
+            :x1="scene.centerX + index * stageWidth"
+            y1="0"
+            :x2="scene.centerX + index * stageWidth"
+            y2="100vh"
+            style="stroke: rgb(100, 100, 100); stroke-width: 2"
+            stroke-dasharray="5, 5"
+          />
+          <text
+            v-for="(stage, index) in stages"
+            :key="index"
+            :x="scene.centerX + index * stageWidth + 50"
+            y="50"
+            textLength="100"
+            lengthAdjust="spacing"
+            style="font-size: 24px;"
+          >
+          {{ stage }}
+          </text>
         </svg>
       </div>
       <div class="dragging-node" v-if="moving" :style="{ top: `${draggingNodeTop}px`, left: `${draggingNodeLeft}px` }">
@@ -57,10 +78,16 @@ export default {
       type: Number,
       default: 400,
     },
-    onDropNewNode: {
-      type: Function,
-      default: () => {}
-    }
+    stageWidth: {
+      type: Number,
+      default: 500,
+    },
+    stages: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
   },
   data() {
     return {
@@ -316,8 +343,10 @@ export default {
 
         this.scene.nodes = this.scene.nodes.map((node) => ({
           ...node,
-          centeredX: (node.centeredX || node.x) + diffX,
-          centeredY: (node.centeredY || node.y) + diffY,
+          centeredX: node.centeredX + diffX,
+          centeredY: node.centeredY + diffY,
+          x: node.x + diffX,
+          y: node.y + diffY,
         }))
 
         // this.hasDragged = true
@@ -356,8 +385,8 @@ export default {
       })
       let left = (this.scene.nodes[index].centeredX || this.scene.nodes[index].x) + dx / this.scene.scale;
       let top = (this.scene.nodes[index].centeredY || this.scene.nodes[index].y) + dy / this.scene.scale;
-      left = Math.min(left, this.scene.centerX + (this.scene.nodes[index].stage + 1) * 500 - 200);
-      left = Math.max(left, this.scene.centerX + this.scene.nodes[index].stage * 500);
+      left = Math.min(left, this.scene.centerX + (this.scene.nodes[index].stage + 1) * this.stageWidth - 200);
+      left = Math.max(left, this.scene.centerX + this.scene.nodes[index].stage * this.stageWidth);
       this.$set(this.scene.nodes, index, Object.assign(this.scene.nodes[index], {
         x: left,
         y: top,
