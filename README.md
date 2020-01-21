@@ -10,7 +10,7 @@ My sincerest apologies to the open source community for allowing this project to
 
 ## Demo
 
-[https://jeffreyrn.github.io/vue-simple-flowchart/demo/](https://jeffreyrn.github.io/vue-simple-flowchart/demo/)
+[https://ierosodin.github.io/vue-simple-flowchart/demo/](https://ierosodin.github.io/vue-simple-flowchart/demo/)
 
 ### Feature
 
