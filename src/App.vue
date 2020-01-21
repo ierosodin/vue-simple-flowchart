@@ -2,15 +2,6 @@
   <div id="app">
     <div id="title">
       <h1> simple flowchart</h1>
-      <div class="tool-wrapper">
-        <select v-model="newNodeType">
-          <option v-for="(item, index) in nodeCategory" :key="index" :value="index">
-            {{ item.name }}
-          </option>
-        </select>
-        <input type="text" v-model="newNodeLabel" placeholder="Input node label">
-        <button @click="addNode">ADD</button>
-      </div>
       <button @click="isPanelShow = !isPanelShow">{{!isPanelShow ? 'Show Panel' : 'Hide Panel'}}</button>
       <button v-if="isPanelShow" @click="isRawScene = !isRawScene">{{!isRawScene ? 'Show Raw' : 'Show Pretty'}}</button>
       <div v-if="isPanelShow" class="panel-area">
@@ -18,6 +9,21 @@
       </div>
     </div>
     
+    <svg width="100%" height="10vh">
+      <a
+        href="#"
+        v-for="(stage, index) in stages"
+        :key="index"
+        @click="newStageType=index; $bvModal.show('createModal')"
+      >
+        <rect :x="20 + index * 90" y="10" width="80" height="50"
+          stroke-dasharray="5, 5"
+          style="stroke: black; stroke-width: 2; fill-opacity: 0; stroke-opacity:0.6" />
+        <text :x="30 + index * 90" y="40" textLength="60" lengthAdjust="spacing">
+          {{ stage }}
+        </text>
+      </a>
+    </svg>
     <simple-flowchart :scene.sync="scene" 
       @nodeClick="nodeClick"
       @nodeDelete="nodeDelete"
@@ -27,6 +33,49 @@
       :stages="stages"
       :stageWidth="stageWidth"
       :height="800"/>
+    <b-modal
+      id="createModal"
+      ref="createModal"
+      class="modal-backdrop fade"
+      title="New Node"
+      hide-footer
+      hide-backdrop
+    >
+      <b-form
+        class="w-100"
+        @submit="onCreateFormSubmit"
+        @reset="onCreateFormReset"
+      >
+        <b-form-select v-model="newNodeType" class="mb-3" required>
+          <b-form-select-option :value="null" disabled>Please select a node type</b-form-select-option>
+          <b-form-select-option
+            v-for="(category, index) in nodeCategory"
+            :key="'category-' + index"
+            v-if="category.stage === parseInt(newStageType)"
+            :value="index"
+          >
+            {{ category.name }}
+          </b-form-select-option>
+        </b-form-select>
+        <b-form-input v-model="newNodeLabel" placeholder="Enter node label"></b-form-input>
+        <br>
+        <b-button-group>
+          <b-button
+            type="submit"
+            variant="primary"
+          >
+            <b>Submit</b>
+          </b-button>
+          &nbsp;
+          <b-button
+            type="reset"
+            variant="danger"
+          >
+            <b>Cancel</b>
+          </b-button>
+        </b-button-group>
+      </b-form>
+    </b-modal>
   </div>
 </template>
 
@@ -93,6 +142,7 @@ export default {
           stage: 5,
         },
       ],
+      newStageType: null,
       stages: {
         0: 'stage1',
         1: 'stage2',
@@ -141,7 +191,20 @@ export default {
     },
     linkAdded(link) {
       console.log('new link added:', link);
-    }
+    },
+    onCreateFormSubmit(e) {
+      e.preventDefault();
+      this.addNode();
+      this.newNodeType = null;
+      this.newNodeLabel = '';
+      this.$refs.createModal.hide();
+    },
+    onCreateFormReset(e) {
+      e.preventDefault();
+      this.newNodeType = null;
+      this.newNodeLabel = '';
+      this.$refs.createModal.hide();
+    },
   }
 }
 </script>

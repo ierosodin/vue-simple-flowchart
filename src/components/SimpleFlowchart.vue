@@ -45,10 +45,6 @@
           </text>
         </svg>
       </div>
-      <div class="dragging-node" v-if="moving" :style="{ top: `${draggingNodeTop}px`, left: `${draggingNodeLeft}px` }">
-        <div class="dragging-node-title" />
-        <div class="dragging-node-label" />
-      </div>
     </div>
   </div>
 </template>
@@ -312,7 +308,7 @@ export default {
           this.mouse.y = e.touches[0].pageY || e.touches[0].clientY + document.documentElement.scrollTop
         }
 
-        const titleHeight = document.getElementById("title").offsetHeight + 22;
+        const titleHeight = document.getElementById("title").offsetHeight + 22 + 45;
         [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x, this.mouse.y - titleHeight];
       }
       if (this.action.dragging) {
@@ -413,51 +409,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.flowchart{
+.flowchart {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
   flex: 1;
 }
-.dragging-node{
-  width: 80px;
-  height: 80px;
-  position: absolute;
-  opacity: 0.9;
-  .dragging-node-title{
-    background: #ff8855;
-    color: white;
-    font-size: 13px;
-    height: 30px;
-    width: 80px;
-  }
-  .dragging-node-label{
-    height: 50px;
-    background: #FFF;
-    width: 80px;
-  }
-}
-.flowchart-toolbar{
-  flex: 0.1;
-  padding-top: 10px;
-}
-.flowchart-toolbar-item{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-.square {
-  width: 30px;
-  height: 30px;
-  border: 1px solid black;
-  margin-bottom: 10px;
-}
 .flowchart-container {
-  flex: 0.9;
+  flex: 1;
   margin: 0;
   background: #ddd;
   position: relative;
