@@ -8,7 +8,7 @@
     @mouseleave="handleMouseLeave"
     v-bind:class="{selected: options.selected === id}"
   >
-    <div class="node-port node-input" :class="{ 'node-port-start': isStart }"
+    <div class="node-port node-input"
       @mouseup="inputMouseUp"
       @mousedown="inputMouseDown"
     ></div>
@@ -16,10 +16,10 @@
       <div v-if="isError" :id="'node-main_' + id" class="node-error">
         <span>Error</span>
       </div>
-      <div v-elif="isWarning" :id="'node-main_' + id" class="node-warning">
+      <div v-else-if="isWarning" :id="'node-main_' + id" class="node-warning">
         <span>Warning</span>
       </div>
-      <div v-elif="isSuccess" :id="'node-main_' + id" class="node-success">
+      <div v-else-if="isSuccess" :id="'node-main_' + id" class="node-success">
         <span>Success</span>
       </div>
       <div ref="nodeType" :id="'node-type_' + id" v-text="type" class="node-type"></div>
@@ -28,7 +28,7 @@
         <div v-if="buttons.length > 0" class="node-buttons" :id="'node-buttons_' + id">
           <div v-for="(button, index) in buttons" :key="index" :id="'button_' + id + '_' + index" class="node-label-button">
             <span>{{button.text}}</span>
-            <div class="node-port node-output" :id="'port_' + id + '_' + index" :class="{ 'node-port-start': isStart }" 
+            <div class="node-port node-output" :id="'port_' + id + '_' + index" 
               :style="buttonPortStyle(index)"
               @mousedown="outputMouseDown(index, $event)"
             ></div>
@@ -36,7 +36,7 @@
         </div>
       </div>
     </div>
-    <div v-if="buttons.length === 0" :id="'node-output_' + id" class="node-port node-output" :class="{ 'node-port-start': isStart }"
+    <div v-if="buttons.length === 0" :id="'node-output_' + id" class="node-port node-output"
       @mousedown="outputMouseDown(-1, $event)"
     >
     </div>
@@ -101,6 +101,24 @@ export default {
         }
       }
     },
+    isError: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    isWarning: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    isSuccess: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     buttons: {
       type: Array,
       default() {
@@ -151,14 +169,6 @@ export default {
         }
       }
       
-      let additionalHeight = 0;
-      if(this.isStart) {
-        const nodeStartTitleElement = document.getElementsByClassName('node-start')[0];
-
-        additionalHeight += nodeStartTitleElement ? nodeStartTitleElement.offsetHeight : 0;
-      }
-      buttonHeight += additionalHeight;
-
       return {
         top: buttonHeight + 'px',
         right: '-8px',
