@@ -9,6 +9,7 @@
     v-bind:class="{selected: options.selected === id}"
   >
     <div class="node-port node-input"
+      :class="{ 'node-port-tag': isError || isWarning || isSuccess }"
       @mouseup="inputMouseUp"
       @mousedown="inputMouseDown"
     ></div>
@@ -36,7 +37,11 @@
         </div>
       </div>
     </div>
-    <div v-if="buttons.length === 0" :id="'node-output_' + id" class="node-port node-output"
+    <div
+      v-if="buttons.length === 0"
+      :id="'node-output_' + id"
+      class="node-port node-output"
+      :class="{ 'node-port-tag': isError || isWarning || isSuccess }"
       @mousedown="outputMouseDown(-1, $event)"
     >
     </div>
@@ -168,6 +173,20 @@ export default {
           buttonHeight += element.offsetHeight;
         }
       }
+      let additionalHeight = 0;
+      if (this.isError) {
+        const nodeTitleElement = document.getElementsByClassName('node-error')[0];
+        additionalHeight += nodeTitleElement.offsetHeight;
+      }
+      if (this.isWarning) {
+        const nodeTitleElement = document.getElementsByClassName('node-warning')[0];
+        additionalHeight += nodeTitleElement.offsetHeight;
+      }
+      if (this.isSuccess) {
+        const nodeTitleElement = document.getElementsByClassName('node-success')[0];
+        additionalHeight += nodeTitleElement.offsetHeight;
+      }
+      buttonHeight += additionalHeight
       
       return {
         top: buttonHeight + 'px',
@@ -337,7 +356,7 @@ $portSize: 16;
       background: $themeColor;
       border: 1px solid $themeColor;
     }
-    &.node-port-start {
+    &.node-port-tag {
       margin-top: 17px;
       top: 50%;
       transform: translateY(-50%);

@@ -186,9 +186,17 @@ export default {
         labelWidth = labelElement.offsetWidth;
       }
       let additionalHeight = 0;
-      if(node.isStart) {
-        const nodeStartTitleElement = document.getElementsByClassName('node-start')[0];
-        additionalHeight += nodeStartTitleElement ? nodeStartTitleElement.offsetHeight : 0;
+      if (node.isError) {
+        const nodeTitleElement = document.getElementsByClassName('node-error')[0];
+        additionalHeight += nodeTitleElement.offsetHeight;
+      }
+      if (node.isWarning) {
+        const nodeTitleElement = document.getElementsByClassName('node-warning')[0];
+        additionalHeight += nodeTitleElement.offsetHeight;
+      }
+      if (node.isSuccess) {
+        const nodeTitleElement = document.getElementsByClassName('node-success')[0];
+        additionalHeight += nodeTitleElement.offsetHeight;
       }
 
       if (type === 'right') {
