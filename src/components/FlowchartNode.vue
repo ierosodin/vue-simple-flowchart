@@ -13,8 +13,14 @@
       @mousedown="inputMouseDown"
     ></div>
     <div :id="'node-main_' + id" class="node-main">
-      <div v-if="isStart" :id="'node-main_' + id" class="node-start">
-        <span>{{startNodeTitle}}</span>
+      <div v-if="isError" :id="'node-main_' + id" class="node-error">
+        <span>Error</span>
+      </div>
+      <div v-elif="isWarning" :id="'node-main_' + id" class="node-warning">
+        <span>Warning</span>
+      </div>
+      <div v-elif="isSuccess" :id="'node-main_' + id" class="node-success">
+        <span>Success</span>
       </div>
       <div ref="nodeType" :id="'node-type_' + id" v-text="type" class="node-type"></div>
       <div class="node-label" :id="'label_' + id">
@@ -42,13 +48,6 @@
 export default {
   name: 'FlowchartNode',
   props: {
-    startNodeTitle: {
-      type: String,
-      default: 'Conversation Start',
-      validator(val) {
-        return typeof val === 'string'
-      }
-    },
     id: {
       type: Number,
       default: 1000,
@@ -100,12 +99,6 @@ export default {
           scale: 1,
           centerY: 140,
         }
-      }
-    },
-    isStart: {
-      type: Boolean,
-      default() {
-        return false;
       }
     },
     buttons: {
@@ -246,14 +239,43 @@ $portSize: 16;
   z-index: 1;
   .node-main {
     text-align: center;
-    .node-start{
+    .node-error {
       margin: 0 auto;
-      background: #e4392b;
+      background: #ff0000;
+      opacity: 0.7;
       padding: 6px;
       width: 200px;
       border-radius: 4px;
       position: relative;
-      span{
+      span {
+        color: #FFF;
+        font-size: 14px;
+        font-weight: 600;
+      }
+    }
+    .node-warning {
+      margin: 0 auto;
+      background: #ffcc00;
+      opacity: 0.7;
+      padding: 6px;
+      width: 200px;
+      border-radius: 4px;
+      position: relative;
+      span {
+        color: #FFF;
+        font-size: 14px;
+        font-weight: 600;
+      }
+    }
+    .node-success {
+      margin: 0 auto;
+      background: #00ff00;
+      opacity: 0.7;
+      padding: 6px;
+      width: 200px;
+      border-radius: 4px;
+      position: relative;
+      span {
         color: #FFF;
         font-size: 14px;
         font-weight: 600;
@@ -280,7 +302,7 @@ $portSize: 16;
         background: #FFF;
         padding: 16px;
       }
-      .node-label-button{
+      .node-label-button {
         border: 1px solid #dfdfdf;
         border-radius: 4px;
         background: #EFEFEF;

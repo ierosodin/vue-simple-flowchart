@@ -8,7 +8,6 @@
       >
         <flowchart-node
           v-bind.sync="node"
-          :startNodeTitle.sync="scene.startNodeTitle"  
           v-for="(node, index) in scene.nodes"
           :key="`node${index}`"
           :options="nodeOptions"
@@ -61,7 +60,6 @@ export default {
       type: Object,
       default() {
         return {
-          startNodeTitle: 'Conversation Start',
           centerX: 0,
           scale: 1,
           centerY: 0,

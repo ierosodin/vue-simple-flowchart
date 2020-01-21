@@ -93,7 +93,6 @@ export default {
       isRawScene: false,
       isPanelShow: false,
       scene: {
-        startNodeTitle: 'Conversation Start',
         centerX: 50,
         centerY: 0,
         scale: 1,
@@ -178,6 +177,9 @@ export default {
         stage: this.nodeCategory[this.newNodeType].stage,
         label: this.newNodeLabel ? this.newNodeLabel: `test${maxID + 1}`,
         buttons: this.nodeCategory[this.newNodeType].buttons,
+        isError: false,
+        isWarning: true,
+        isSuccess: false,
       })
     },
     nodeClick(id) {
