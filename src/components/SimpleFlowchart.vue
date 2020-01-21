@@ -24,7 +24,7 @@
           </flowchart-link>
           <line
             v-for="(stage, index) in stages"
-            :key="index"
+            :key="'line-' + index"
             :x1="scene.centerX + index * stageWidth"
             y1="0"
             :x2="scene.centerX + index * stageWidth"
@@ -34,7 +34,7 @@
           />
           <text
             v-for="(stage, index) in stages"
-            :key="index"
+            :key="'text-' + index"
             :x="scene.centerX + index * stageWidth + 50"
             y="50"
             textLength="100"
