@@ -350,11 +350,11 @@ $portSize: 16;
   }
   .node-delete {
     position: absolute;
-    right: -6px;
-    top: -6px;
-    font-size: 12px;
-    width: 12px;
-    height: 12px;
+    right: -10px;
+    top: -10px;
+    font-size: 15px;
+    width: 20px;
+    height: 20px;
     color: $themeColor;
     cursor: pointer;
     background: white;
