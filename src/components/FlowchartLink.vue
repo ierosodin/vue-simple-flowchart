@@ -58,7 +58,9 @@ export default {
     },
     caculateRotation() {
       // caculate arrow rotation
-      const angle = -Math.atan2(this.end[0] - this.start[0], this.end[1] - this.start[1]);
+      let deltaX = this.end[0] - this.start[0] - 50;
+      let deltaY = this.end[1] - this.start[1];
+      const angle = -Math.atan2(deltaX, deltaY);
       const degree = angle * 180 / Math.PI;
       return degree < 0 ? degree + 360 : degree;
     },

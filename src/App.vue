@@ -24,7 +24,6 @@
       @linkBreak="linkBreak"
       @linkAdded="linkAdded"
       @canvasClick="canvasClick"
-      @onDropNewNode="onCreateNode"
       :height="800"/>
   </div>
 </template>
@@ -47,95 +46,10 @@ export default {
         centerX: 50,
         centerY: 0,
         scale: 1,
-        nodes: [
-          {
-            id: 1,
-            x: 10,
-            y: 10,
-            type: 'Action',
-            label: 'Hello, This is KR dev bot! How can I help you?',
-            stage: 0,
-            isStart: true,
-            buttons: [{
-              id: 1,
-              text: 'Option 1'
-            }, {
-              id: 2,
-              text: 'Option 2'
-            }, {
-              id: 3,
-              text: 'Option 3'
-            }]
-          },
-          {
-            id: 2,
-            x: 300,
-            y: 100,
-            type: 'Script',
-            label: 'Do you have any symptoms described below such as cough, fever, etc?',
-            stage: 0,
-            buttons: [{
-              id: 1,
-              text: 'Yes'
-            }, {
-              id: 2,
-              text: 'No'
-            }, {
-              id: 3,
-              text: "I don't know what to say but this sentence just to long I can't handle it"
-            }]
-          },
-          {
-            id: 3,
-            x: 600,
-            y: 100,
-            type: 'Rule',
-            label: 'test3',
-            stage: 0,
-          },
-          {
-            id: 4,
-            x: 900,
-            y: 400,
-            type: 'Rule',
-            label: 'test4',
-            stage: 0,
-          }
-        ],
-        links: [
-          {
-            id: 5,
-            from: 1, // node id the link start
-            button: 2,
-            to: 2,  // node id the link end
-          },
-          {
-            id: 6,
-            from: 2, // node id the link start
-            button: 1,
-            to: 3,  // node id the link end
-          },
-          {
-            id: 7,
-            from: 2, // node id the link start
-            button: 2,
-            to: 3,  // node id the link end
-          },
-          {
-            id: 8,
-            from: 3, // node id the link start
-            button: undefined,
-            to: 4,  // node id the link end
-          },
-          {
-            id: 9,
-            from: 4, // node id the link start
-            button: undefined,
-            to: 1,  // node id the link end
-          },
-        ]
+        nodes: [],
+        links: [],
       },
-      newNodeType: 0,
+      newNodeType: null,
       newNodeLabel: '',
       nodeCategory: [
         {
@@ -205,25 +119,12 @@ export default {
       }))
       this.scene.nodes.push({
         id: maxID + 1,
-        x: this.nodeCategory[this.newNodeType].stage * 400 + 80,
-        y: 50,
+        x: this.scene.centerX + this.nodeCategory[this.newNodeType].stage * 500,
+        y: this.scene.centerY + 50,
         type: this.nodeCategory[this.newNodeType].name,
         stage: this.nodeCategory[this.newNodeType].stage,
         label: this.newNodeLabel ? this.newNodeLabel: `test${maxID + 1}`,
         buttons: this.nodeCategory[this.newNodeType].buttons,
-      })
-    },
-    onCreateNode({x, y, nodeType, label, stage}) {
-      let maxID = Math.max(0, ...this.scene.nodes.map((link) => {
-        return link.id
-      }))
-      this.scene.nodes.push({
-        id: maxID + 1,
-        x: x,
-        y,
-        type: nodeType,
-        label,
-        stage,
       })
     },
     nodeClick(id) {
