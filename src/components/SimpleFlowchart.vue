@@ -407,11 +407,11 @@ export default {
       }));
     },
     nodeDelete(id) {
-      this.scene.nodes = this.scene.nodes.filter((node) => {
-        return node.id !== id;
-      })
       this.scene.links = this.scene.links.filter((link) => {
         return link.from !== id && link.to !== id
+      })
+      this.scene.nodes = this.scene.nodes.filter((node) => {
+        return node.id !== id;
       })
       this.$emit('nodeDelete', id)
     },
