@@ -24,23 +24,24 @@
           <line
             v-for="(stage, index) in stages"
             :key="'line-' + index"
-            :x1="(scene.centerX + index * stageWidth) * scene.scale"
+            :id="'line-' + index"
+            :x1="calStageWidth(index)"
             y1="0"
-            :x2="(scene.centerX + index * stageWidth) * scene.scale"
+            :x2="calStageWidth(index)"
             y2="100vh"
-            style="stroke: rgb(100, 100, 100); stroke-width: 2"
-            stroke-dasharray="5, 5"
+            style="stroke: rgb(100, 100, 100); stroke-width: 6; cursor: col-resize"
+            stroke-dasharray="20, 20"
           />
           <text
             v-for="(stage, index) in stages"
             :key="'text-' + index"
-            :x="(scene.centerX + index * stageWidth + 50) * scene.scale"
+            :x="calStageWidth(index) + 50 * scene.scale"
             y="50"
             textLength="100"
             lengthAdjust="spacing"
             style="font-size: 24px;"
           >
-          {{ stage }}
+          {{ stage.name }}
           </text>
         </svg>
       </div>
@@ -89,7 +90,9 @@ export default {
         linking: false,
         dragging: false,
         scrolling: false,
+        movingBound: false,
         selected: 0,
+        selectedBound: null,
       },
       mouse: {
         x: 0,
@@ -140,17 +143,25 @@ export default {
     this.rootDivOffset.left = this.$el ? this.$el.offsetLeft : 0;
   },
   methods: {
+    calStageWidth(index) {
+      if (parseInt(index) > 0)
+        this.stages[index].width = 
+          this.stages[index - 1].width + this.stages[index - 1].widthDelta * this.scene.scale
+      else
+        this.stages[index].width = this.scene.centerX * this.scene.scale
+      return this.stages[index].width
+    },
     lines() {
       const lines = this.scene.links.map((link) => {
         const fromNode = this.findNodeWithID(link.from)
         const toNode = this.findNodeWithID(link.to)
         let x, y, cy, cx, ex, ey;
 
-        x = (fromNode.centeredX || fromNode.x);
-        y = (fromNode.centeredY || fromNode.y);
+        x = fromNode.centeredX;
+        y = fromNode.centeredY;
         [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, link.button);
-        x = (toNode.centeredX || toNode.x);
-        y = (toNode.centeredY || toNode.y);
+        x = toNode.centeredX;
+        y = toNode.centeredY;
         [ex, ey] = this.getPortPosition(toNode, 'left', x, y);
         return { 
           start: [cx, cy], 
@@ -161,8 +172,8 @@ export default {
       if (this.draggingLink) {
         let x, y, cy, cx;
         const fromNode = this.findNodeWithID(this.draggingLink.from);
-        x = (fromNode.centeredX || fromNode.x);
-        y = (fromNode.centeredY || fromNode.y);
+        x = fromNode.centeredX;
+        y = fromNode.centeredY;
         [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, this.draggingLink.buttonIndex + 1);
         // push temp dragging link, mouse cursor postion = link end postion 
         lines.push({ 
@@ -324,7 +335,7 @@ export default {
         }
 
         const scrollY = document.getElementById("app").scrollTop;
-        const titleHeight = document.getElementById("title").offsetHeight + 22 + 78;
+        const titleHeight = document.getElementById("title").offsetHeight + 22 + 87;
         [this.draggingLink.mx, this.draggingLink.my] = [this.mouse.x, this.mouse.y - titleHeight + scrollY];
       }
       if (this.action.dragging) {
@@ -360,8 +371,32 @@ export default {
           x: node.x + diffX,
           y: node.y + diffY,
         }))
+      }
+      if (this.action.movingBound) {
+        [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
+        let diffX = this.mouse.x - this.mouse.lastX;
 
-        // this.hasDragged = true
+        this.mouse.lastX = this.mouse.x;
+
+        if (this.action.selectedBound > 0
+          && (this.stages[this.action.selectedBound - 1].width - diffX + 200
+            * this.scene.scale) < this.stages[this.action.selectedBound].width) {
+          this.stages[this.action.selectedBound - 1].widthDelta += diffX;
+          [...Array(this.scene.nodes.length).keys()].forEach((i) => {
+            if (this.scene.nodes[i].stage >= this.action.selectedBound) {
+              this.$set(this.scene.nodes, i, Object.assign(this.scene.nodes[i], {
+                centeredX: this.scene.nodes[i].centeredX + diffX,
+                centeredY: this.scene.nodes[i].centeredY
+              }));
+            } else {
+              if ((this.scene.nodes[i].centeredX + 200) * this.scene.scale > this.calStageWidth(this.action.selectedBound))
+                this.$set(this.scene.nodes, i, Object.assign(this.scene.nodes[i], {
+                  centeredX: this.calStageWidth(this.action.selectedBound) / this.scene.scale - 200,
+                  centeredY: this.scene.nodes[i].centeredY
+                }));
+            }
+          });
+        }
       }
     },
     handleUp(e) {
@@ -380,11 +415,22 @@ export default {
       this.action.linking = false;
       this.action.dragging = null;
       this.action.scrolling = false;
+      this.action.movingBound = false;
+      this.action.selectedBound = null;
     },
     handleDown(e) {
       const target = e.target || e.srcElement;
       // console.log('for scroll', target, e.keyCode, e.which)
-      if (target === this.$el || target.matches('svg, svg *')) {
+      if (target === this.$el || target.matches('line, line *')) {
+        this.action.selectedBound = target.id.split('-')[1];
+        if (this.action.selectedBound > 0)
+          this.action.movingBound = true;
+        else
+          this.action.scrolling = true;
+        [this.mouse.lastX, this.mouse.lastY] = getMousePosition(this.$el, e);
+        this.action.selected = null; // deselectAll
+      }
+      else if (target === this.$el || target.matches('svg, svg *')) {
         this.action.scrolling = true;
         [this.mouse.lastX, this.mouse.lastY] = getMousePosition(this.$el, e);
         this.action.selected = null; // deselectAll
@@ -395,13 +441,11 @@ export default {
       let index = this.scene.nodes.findIndex((item) => {
         return item.id === this.action.dragging
       })
-      let left = (this.scene.nodes[index].centeredX || this.scene.nodes[index].x) + dx / this.scene.scale;
-      let top = (this.scene.nodes[index].centeredY || this.scene.nodes[index].y) + dy / this.scene.scale;
-      left = Math.min(left, this.scene.centerX + (this.scene.nodes[index].stage + 1) * this.stageWidth - 200);
-      left = Math.max(left, this.scene.centerX + this.scene.nodes[index].stage * this.stageWidth);
+      let left = this.scene.nodes[index].centeredX + dx / this.scene.scale;
+      let top = this.scene.nodes[index].centeredY + dy / this.scene.scale;
+      left = Math.min(left, this.calStageWidth(this.scene.nodes[index].stage + 1) / this.scene.scale - 200);
+      left = Math.max(left, this.calStageWidth(this.scene.nodes[index].stage) / this.scene.scale);
       this.$set(this.scene.nodes, index, Object.assign(this.scene.nodes[index], {
-        x: left,
-        y: top,
         centeredX: left,
         centeredY: top
       }));

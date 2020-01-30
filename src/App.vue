@@ -10,30 +10,27 @@
     </div>
     <br>
     <div class="flowchart">
-      <b-row>
-        <b-col
+      <h2>
+        <nobr
           v-for="(stage, index) in stages"
           :key="index"
-          class="col-5 col-lg-2 col-md-3 col-sm-4"
         >
-          <span>
-            <b-button
-              variant="outline-dark"
-              size="lg"
-              @click="newStageType=index; $bvModal.show('createModal')"
-            >
-              {{ stage }}
-            </b-button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <font-awesome-icon
-              class="faWidth"
-              v-if="parseInt(index) + 1 < Object.keys(stages).length"
-              :icon="['fas', 'arrow-right']"
-              size="lg"
-            />
-          </span>
-        </b-col>
-      </b-row>
+          <b-button
+            variant="outline-dark"
+            size="lg"
+            @click="newStageType=index; $bvModal.show('createModal')"
+          >
+            {{ stage.name }}
+          </b-button>
+          &nbsp;
+          <font-awesome-icon
+            v-if="parseInt(index) + 1 < Object.keys(stages).length"
+            :icon="['fas', 'arrow-right']"
+            size="lg"
+          />
+          &nbsp;
+        </nobr>
+      </h2>
       <b-row align-h="end">
         <b-col sm="1">
           <label>Scale:</label>
@@ -48,7 +45,7 @@
         @linkBreak="linkBreak"
         @linkAdded="linkAdded"
         @canvasClick="canvasClick"
-        :stages="stages"
+        :stages.sync="stages"
         :stageWidth="stageWidth"
         :height="1200"/>
     </div>
@@ -162,14 +159,38 @@ export default {
       ],
       newStageType: null,
       stages: {
-        0: 'stage1',
-        1: 'stage2',
-        2: 'stage3',
-        3: 'stage4',
-        4: 'stage5',
-        5: 'stage6',
+        0: {
+          name: 'stage1',
+          width: 0,
+          widthDelta: 500,
+        },
+        1: {
+          name: 'stage2',
+          width: 0,
+          widthDelta: 500,
+        },
+        2: {
+          name: 'stage3',
+          width: 0,
+          widthDelta: 500,
+        },
+        3: {
+          name: 'stage4',
+          width: 0,
+          widthDelta: 500,
+        },
+        4: {
+          name: 'stage5',
+          width: 0,
+          widthDelta: 500,
+        },
+        5: {
+          name: 'stage6',
+          width: 0,
+          widthDelta: 500,
+        },
       },
-      stageWidth: 600,
+      stageWidth: 500,
     }
   },
   computed: {
@@ -190,8 +211,8 @@ export default {
       }))
       this.scene.nodes.push({
         id: maxID + 1,
-        x: this.scene.centerX + this.nodeCategory[this.newNodeType].stage * this.stageWidth,
-        y: this.scene.centerY + 50,
+        centeredX: this.stages[this.nodeCategory[this.newNodeType].stage].width / this.scene.scale,
+        centeredY: this.scene.centerY + 50,
         type: this.nodeCategory[this.newNodeType].name,
         stage: this.nodeCategory[this.newNodeType].stage,
         label: this.newNodeLabel ? this.newNodeLabel: `test${maxID + 1}`,
@@ -262,9 +283,6 @@ export default {
   }
   .flowchart {
     max-height: 70vh;
-  }
-  .faWidth {
-    transform: scale(1.5,1);
   }
 }
 </style>
