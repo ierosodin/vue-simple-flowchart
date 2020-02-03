@@ -56,7 +56,8 @@ export default {
     },
     calculateRotation() {
       // calculate arrow rotation
-      let deltaX = this.end[0] - this.start[0] - 50;
+      let deltaX = this.end[0] - this.start[0];
+      deltaX = deltaX > 30 ? deltaX *= 0.2 : deltaX;
       let deltaY = this.end[1] - this.start[1];
       const angle = -Math.atan2(deltaX, deltaY);
       const degree = angle * 180 / Math.PI;
@@ -88,7 +89,9 @@ export default {
     },
     dAttr() {
       let cx = this.start[0], cy = this.start[1], ex = this.end[0], ey = this.end[1];
-      let x1 = cx + 50, y1 = cy, x2 = ex - 50, y2 = ey;
+      let x1 = cx, y1 = cy, x2 = ex, y2 = ey;
+      x1 += (ex - cx) * 0.8;
+      x2 -= (ex - cx) * 0.8;
       return `M ${cx}, ${cy} C ${x1}, ${y1}, ${x2}, ${y2}, ${ex}, ${ey}`;
     }
   }
