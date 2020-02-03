@@ -349,18 +349,18 @@ export default {
         this.mouse.lastX = this.mouse.x;
         this.mouse.lastY = this.mouse.y;
 
-        this.scene.centerX += diffX;
-        this.scene.centerY += diffY;
+        this.scene.centerX += diffX / this.scene.scale;
+        this.scene.centerY += diffY / this.scene.scale;
 
         this.scene.nodes = this.scene.nodes.map((node) => ({
           ...node,
-          centeredX: node.centeredX + diffX,
-          centeredY: node.centeredY + diffY,
+          centeredX: node.centeredX + diffX / this.scene.scale,
+          centeredY: node.centeredY + diffY / this.scene.scale,
         }))
       }
       if (this.action.movingBound) {
         [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e);
-        let diffX = this.mouse.x - this.mouse.lastX;
+        const diffX = (this.mouse.x - this.mouse.lastX) / this.scene.scale;
 
         this.mouse.lastX = this.mouse.x;
 
