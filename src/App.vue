@@ -46,7 +46,6 @@
         @linkAdded="linkAdded"
         @canvasClick="canvasClick"
         :stages.sync="stages"
-        :stageWidth="stageWidth"
         :height="1200"/>
     </div>
     <b-modal
@@ -125,12 +124,12 @@ export default {
         },
         {
           name: 'nodeType2',
-          stage: 0,
+          stage: 1,
           outButtons: [],
         },
         {
           name: 'nodeType3',
-          stage: 1,
+          stage: 2,
           outButtons: [{
             id: 0,
             text: 'Option 1'
@@ -149,17 +148,17 @@ export default {
         },
         {
           name: 'nodeType5',
-          stage: 3,
+          stage: 2,
           outButtons: [],
         },
         {
           name: 'nodeType6',
-          stage: 4,
+          stage: 2,
           outButtons: [],
         },
         {
           name: 'nodeType7',
-          stage: 5,
+          stage: 3,
           outButtons: [],
         },
       ],
@@ -185,18 +184,7 @@ export default {
           width: 0,
           widthDelta: 500,
         },
-        4: {
-          name: 'stage5',
-          width: 0,
-          widthDelta: 500,
-        },
-        5: {
-          name: 'stage6',
-          width: 0,
-          widthDelta: 500,
-        },
       },
-      stageWidth: 500,
     }
   },
   computed: {

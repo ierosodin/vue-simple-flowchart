@@ -73,10 +73,6 @@ export default {
       type: Number,
       default: 400,
     },
-    stageWidth: {
-      type: Number,
-      default: 500,
-    },
     stages: {
       type: Object,
       default() {
@@ -300,11 +296,6 @@ export default {
         const linkIndex = this.scene.links.findIndex((item) => {
           return item.id === id;
         });
-        /*
-        this.scene.links = this.scene.links.filter((item) => {
-            return item.id !== id;
-        });
-        */
         const nodeTo = this.scene.nodes.find((item) => {
           return item.id === this.scene.links[linkIndex].to;
         });
@@ -446,7 +437,9 @@ export default {
       })
       let left = this.scene.nodes[index].centeredX + dx / this.scene.scale;
       let top = this.scene.nodes[index].centeredY + dy / this.scene.scale;
-      left = Math.min(left, this.calStageWidth(this.scene.nodes[index].stage + 1) / this.scene.scale - 200);
+      if (this.scene.nodes[index].stage + 1 < Object.keys(this.stages).length) {
+        left = Math.min(left, this.calStageWidth(this.scene.nodes[index].stage + 1) / this.scene.scale - 200);
+      }
       left = Math.max(left, this.calStageWidth(this.scene.nodes[index].stage) / this.scene.scale);
       this.$set(this.scene.nodes, index, Object.assign(this.scene.nodes[index], {
         centeredX: left,
