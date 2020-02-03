@@ -116,11 +116,11 @@ export default {
     };
   },
   created() {
-    window.addEventListener('resize', this.handleResize);
-    this.handleResize();
+    window.addEventListener('resize', this.windowsResize);
+    this.windowsResize();
   },
   destroyed() {
-    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener('resize', this.windowsResize);
   },
   components: {
     FlowchartLink,
@@ -159,7 +159,7 @@ export default {
 
         x = fromNode.centeredX;
         y = fromNode.centeredY;
-        [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, link.button);
+        [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, link.outButton);
         x = toNode.centeredX;
         y = toNode.centeredY;
         [ex, ey] = this.getPortPosition(toNode, 'left', x, y);
@@ -174,7 +174,7 @@ export default {
         const fromNode = this.findNodeWithID(this.draggingLink.from);
         x = fromNode.centeredX;
         y = fromNode.centeredY;
-        [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, this.draggingLink.buttonIndex + 1);
+        [cx, cy] = this.getPortPosition(fromNode, 'right', x, y, this.draggingLink.buttonIndex);
         // push temp dragging link, mouse cursor postion = link end postion 
         lines.push({ 
           start: [cx, cy],
@@ -197,30 +197,17 @@ export default {
         labelWidth = labelElement.offsetWidth;
       }
       let additionalHeight = 0;
-      if (node.isError) {
+      if (node.stat !== null) {
         const nodeTitleElement = document.getElementsByClassName('node-error')[0];
-        additionalHeight += nodeTitleElement.offsetHeight;
+        additionalHeight += 40;
       }
-      if (node.isWarning) {
-        const nodeTitleElement = document.getElementsByClassName('node-warning')[0];
-        additionalHeight += nodeTitleElement.offsetHeight;
-      }
-      if (node.isSuccess) {
-        const nodeTitleElement = document.getElementsByClassName('node-success')[0];
-        additionalHeight += nodeTitleElement.offsetHeight;
-      }
-
       if (type === 'right') {
         let buttonIndex = null;
 
         if (buttonId && buttonId !== -1) {
-          buttonIndex = node.buttons.findIndex((button) => button.id === buttonId);
+          buttonIndex = node.outButtons.findIndex((button) => button.id === buttonId);
         } else {
-            if (buttonId === -1 && this.draggingLink && this.draggingLink.buttonIndex !== undefined) { // this line is important! -1 means the condition is in dragginglink
-            buttonIndex = this.draggingLink.buttonIndex;
-          } else {
-            return [(x + labelWidth) * this.scene.scale, (y + labelHeight/2 + additionalHeight/2) * this.scene.scale]
-          }
+          return [(x + labelWidth) * this.scene.scale, (y + labelHeight/2 + additionalHeight/2 - 4) * this.scene.scale]
         }
 
         const nodeTypeElement = document.getElementById(`node-type_${node.id}`);
@@ -248,7 +235,7 @@ export default {
         return [(x + labelWidth) * this.scene.scale, (y + buttonHeight) * this.scene.scale];
       }
       else if (type === 'left') {
-        return [(x) * this.scene.scale, (y + labelHeight/2 + additionalHeight/2) * this.scene.scale]
+        return [(x) * this.scene.scale, (y + labelHeight/2 + additionalHeight/2 - 4) * this.scene.scale]
       }
     },
     linkingStart(nodeId, e) {
@@ -273,7 +260,7 @@ export default {
         const existed = this.scene.links.find((link) => {
           return link.from === this.draggingLink.from &&
             link.to === index &&
-            (link.button ? link.button === this.findNodeWithID(link.from).buttons[this.draggingLink.buttonIndex].id : true);
+            (link.outButton !== -1 ? link.outButton === this.findNodeWithID(link.from).outButtons[this.draggingLink.buttonIndex].id : true);
         })
         const nodeFrom = this.scene.nodes.find((node) => {
           return node.id === this.draggingLink.from;
@@ -283,36 +270,53 @@ export default {
         })
         const valid = nodeFrom.stage <= nodeTo.stage;
         if (!existed && valid) {
-          let maxID = Math.max(0, ...this.scene.links.map((link) => {
+          let maxID = Math.max(-1, ...this.scene.links.map((link) => {
             return link.id
           }))
           const fromNode = this.findNodeWithID(this.draggingLink.from);
-          const outputButtonId = fromNode.buttons && fromNode.buttons.length ? fromNode.buttons[this.draggingLink.buttonIndex].id : undefined;
+          const outputButtonId = fromNode.outButtons && fromNode.outButtons.length ? fromNode.outButtons[this.draggingLink.buttonIndex].id : -1;
           const newLink = {
             id: maxID + 1,
             from: this.draggingLink.from,
             to: index,
-            button: outputButtonId,
+            outButton: outputButtonId,
           };
           this.scene.links.push(newLink)
+          // add link info to node
+          nodeTo.upStream.push({
+            id: this.draggingLink.from,
+            button: outputButtonId,
+          })
           this.$emit('linkAdded', newLink)
         }
       }
-      this.draggingLink = null
+      this.draggingLink = null;
     },
     linkDelete(id) {
       const deletedLink = this.scene.links.find((item) => {
           return item.id === id;
       });
       if (deletedLink) {
+        const linkIndex = this.scene.links.findIndex((item) => {
+          return item.id === id;
+        });
+        /*
         this.scene.links = this.scene.links.filter((item) => {
             return item.id !== id;
         });
+        */
+        const nodeTo = this.scene.nodes.find((item) => {
+          return item.id === this.scene.links[linkIndex].to;
+        });
+        nodeTo.upStream = nodeTo.upStream.filter((item) => {
+          return (item.id !== this.scene.links[linkIndex].from) || (item.button !== this.scene.links[linkIndex].outButton);
+        });
+        this.scene.links.splice(linkIndex, 1);
         this.$emit('linkBreak', deletedLink);
       }
     },
     nodeSelected(id, e) {
-      this.action.dragging = id;
+      this.action.dragging = true;
       this.action.selected = id;
       this.$emit('nodeClick', id);
       if (e.type.includes('mouse')) {
@@ -368,8 +372,6 @@ export default {
           ...node,
           centeredX: node.centeredX + diffX,
           centeredY: node.centeredY + diffY,
-          x: node.x + diffX,
-          y: node.y + diffY,
         }))
       }
       if (this.action.movingBound) {
@@ -409,13 +411,14 @@ export default {
         }
         if (typeof target.className === 'string' && target.className.indexOf('node-delete') > -1) {
           // console.log('delete2', this.action.dragging);
-          this.nodeDelete(this.action.dragging);
+          this.nodeDelete(this.action.selected);
         }
       }
       this.action.linking = false;
-      this.action.dragging = null;
+      this.action.dragging = false;
       this.action.scrolling = false;
       this.action.movingBound = false;
+      this.action.selected = null;
       this.action.selectedBound = null;
     },
     handleDown(e) {
@@ -439,7 +442,7 @@ export default {
     },
     moveSelectedNode(dx, dy) {
       let index = this.scene.nodes.findIndex((item) => {
-        return item.id === this.action.dragging
+        return item.id === this.action.selected
       })
       let left = this.scene.nodes[index].centeredX + dx / this.scene.scale;
       let top = this.scene.nodes[index].centeredY + dy / this.scene.scale;
@@ -451,6 +454,16 @@ export default {
       }));
     },
     nodeDelete(id) {
+      this.scene.links.forEach((link) => {
+        if (link.from === id) {
+          let nodeTo = this.scene.nodes.find((node) => {
+            return node.id === link.to;
+          });
+          nodeTo.upStream = nodeTo.upStream.filter((item) => {
+            return item.id !== id;
+          });
+        }
+      });
       this.scene.links = this.scene.links.filter((link) => {
         return link.from !== id && link.to !== id
       })
@@ -459,7 +472,7 @@ export default {
       })
       this.$emit('nodeDelete', id)
     },
-    handleResize() {
+    windowsResize() {
       this.window.width = window.innerWidth;
       this.window.height = window.innerHeight;
     },

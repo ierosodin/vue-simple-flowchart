@@ -121,40 +121,46 @@ export default {
         {
           name: 'nodeType1',
           stage: 0,
+          outButtons: [],
         },
         {
           name: 'nodeType2',
           stage: 0,
+          outButtons: [],
         },
         {
           name: 'nodeType3',
           stage: 1,
-          buttons: [{
-            id: 1,
+          outButtons: [{
+            id: 0,
             text: 'Option 1'
           }, {
-            id: 2,
+            id: 1,
             text: 'Option 2'
           }, {
-            id: 3,
+            id: 2,
             text: 'Option 3'
           }]
         },
         {
           name: 'nodeType4',
           stage: 2,
+          outButtons: [],
         },
         {
           name: 'nodeType5',
           stage: 3,
+          outButtons: [],
         },
         {
           name: 'nodeType6',
           stage: 4,
+          outButtons: [],
         },
         {
           name: 'nodeType7',
           stage: 5,
+          outButtons: [],
         },
       ],
       newStageType: null,
@@ -205,9 +211,9 @@ export default {
     canvasClick(e) {
       console.log('canvas Click, event:', e)
     },
-    addNode() {
-      let maxID = Math.max(0, ...this.scene.nodes.map((link) => {
-        return link.id
+    addNode(stat) {
+      let maxID = Math.max(-1, ...this.scene.nodes.map((node) => {
+        return node.id;
       }))
       this.scene.nodes.push({
         id: maxID + 1,
@@ -216,10 +222,9 @@ export default {
         type: this.nodeCategory[this.newNodeType].name,
         stage: this.nodeCategory[this.newNodeType].stage,
         label: this.newNodeLabel ? this.newNodeLabel: `test${maxID + 1}`,
-        buttons: this.nodeCategory[this.newNodeType].buttons,
-        isError: false,
-        isWarning: true,
-        isSuccess: false,
+        outButtons: this.nodeCategory[this.newNodeType].outButtons,
+        stat: stat,
+        upStream: [],
       })
     },
     nodeClick(id) {
@@ -236,7 +241,7 @@ export default {
     },
     onCreateFormSubmit(e) {
       e.preventDefault();
-      this.addNode();
+      this.addNode('warning');
       this.newNodeType = null;
       this.newNodeLabel = '';
       this.$refs.createModal.hide();

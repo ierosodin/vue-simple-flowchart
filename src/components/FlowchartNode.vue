@@ -9,25 +9,25 @@
     v-bind:class="{selected: options.selected === id}"
   >
     <div class="node-port node-input"
-      :class="{ 'node-port-tag': isError || isWarning || isSuccess }"
+      :class="{ 'node-port-tag': stat }"
       @mouseup="inputMouseUp"
       @mousedown="inputMouseDown"
     ></div>
     <div :id="'node-main_' + id" class="node-main">
-      <div v-if="isError" :id="'node-main_' + id" class="node-error">
+      <div v-if="stat === 'error'" :id="'node-main_' + id" class="node-error">
         <span>Error</span>
       </div>
-      <div v-else-if="isWarning" :id="'node-main_' + id" class="node-warning">
+      <div v-else-if="stat === 'warning'" :id="'node-main_' + id" class="node-warning">
         <span>Warning</span>
       </div>
-      <div v-else-if="isSuccess" :id="'node-main_' + id" class="node-success">
+      <div v-else :id="'node-main_' + id" class="node-success">
         <span>Success</span>
       </div>
       <div ref="nodeType" :id="'node-type_' + id" v-text="type" class="node-type"></div>
       <div class="node-label" :id="'label_' + id">
         <div ref="labelTitle" class="node-label-title" :id="'label-title_' + id" v-text="label" />
-        <div v-if="buttons.length > 0" class="node-buttons" :id="'node-buttons_' + id">
-          <div v-for="(button, index) in buttons" :key="index" :id="'button_' + id + '_' + index" class="node-label-button">
+        <div v-if="outButtons.length > 0" class="node-buttons" :id="'node-buttons_' + id">
+          <div v-for="(button, index) in outButtons" :key="index" :id="'button_' + id + '_' + index" class="node-label-button">
             <span>{{button.text}}</span>
             <div class="node-port node-output" :id="'port_' + id + '_' + index" 
               :style="buttonPortStyle(index)"
@@ -38,10 +38,10 @@
       </div>
     </div>
     <div
-      v-if="buttons.length === 0"
+      v-if="outButtons.length === 0"
       :id="'node-output_' + id"
       class="node-port node-output"
-      :class="{ 'node-port-tag': isError || isWarning || isSuccess }"
+      :class="{ 'node-port-tag': stat }"
       @mousedown="outputMouseDown(-1, $event)"
     >
     </div>
@@ -56,20 +56,6 @@ export default {
     id: {
       type: Number,
       default: 1000,
-      validator(val) {
-        return typeof val === 'number'
-      }
-    },
-    x: {
-      type: Number,
-      default: 0,
-      validator(val) {
-        return typeof val === 'number'
-      }
-    },    
-    y: {
-      type: Number,
-      default: 0,
       validator(val) {
         return typeof val === 'number'
       }
@@ -106,46 +92,43 @@ export default {
         }
       }
     },
-    isError: {
-      type: Boolean,
+    stat: {
+      type: String,
       default() {
-        return false;
+        return 'success';
       }
     },
-    isWarning: {
-      type: Boolean,
-      default() {
-        return false;
-      }
-    },
-    isSuccess: {
-      type: Boolean,
-      default() {
-        return false;
-      }
-    },
-    buttons: {
+    outButtons: {
       type: Array,
       default() {
         return [];
       }
-    }
+    },
+    upStream: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
   },
   data() {
     return {
       show: {
-        delete: false,
+        delete: true,
       },
-      linkingStart: false
+      linkingStart: false,
+      reload: false,
     }
   },
   mounted() {
+    // trigger buttonPortStyle fn
+    this.show.delete = false;
   },
   computed: {
     nodeStyle() {
       return {
-        top: ((this.centeredY || this.y)  * this.options.scale) + 'px', // remove: this.options.offsetTop + 
-        left: ((this.centeredX || this.x) * this.options.scale) + 'px', // remove: this.options.offsetLeft + 
+        top: this.centeredY * this.options.scale + 'px', // remove: this.options.offsetTop + 
+        left: this.centeredX * this.options.scale + 'px', // remove: this.options.offsetLeft + 
         transform: `scale(${this.options.scale})`,
       }
     }
@@ -166,31 +149,22 @@ export default {
       let element = null;
       for (let i = index; i >= 0; i--) {
         element = document.getElementById('button_' + this.id + '_' + i);
-        if(!element) { continue; }
-        if(i === index) {
-          buttonHeight += element.offsetHeight/1.75;
+        if (!element) { continue; }
+        if (i === index) {
+          buttonHeight += element.offsetHeight / 1.75;
         } else {
           buttonHeight += element.offsetHeight;
         }
       }
       let additionalHeight = 0;
-      if (this.isError) {
-        const nodeTitleElement = document.getElementsByClassName('node-error')[0];
-        additionalHeight += nodeTitleElement.offsetHeight;
-      }
-      if (this.isWarning) {
-        const nodeTitleElement = document.getElementsByClassName('node-warning')[0];
-        additionalHeight += nodeTitleElement.offsetHeight;
-      }
-      if (this.isSuccess) {
-        const nodeTitleElement = document.getElementsByClassName('node-success')[0];
-        additionalHeight += nodeTitleElement.offsetHeight;
+      if (this.stat !== null) {
+        additionalHeight += 40;
       }
       buttonHeight += additionalHeight
       
       return {
         top: buttonHeight + 'px',
-        right: '-8px',
+        right: '-12px',
         marginTop: '0px'
       }
     },
@@ -298,7 +272,7 @@ $portSize: 16;
     }
     .node-success {
       margin: 0 auto;
-      background: #00ff00;
+      background: #33FF39;
       opacity: 0.9;
       padding: 6px;
       width: 200px;
@@ -363,10 +337,10 @@ $portSize: 16;
     }
   }
   .node-input {
-    left: #{-2+$portSize/-3}px;
+    left: #{-$portSize+4}px;
   }
   .node-output {
-    right: #{-2+$portSize/-3}px;
+    right: #{-$portSize+4}px;
   }
   .node-delete {
     position: absolute;

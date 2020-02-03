@@ -43,9 +43,7 @@ export default {
   },
   methods: {
     handleMouseOver() {
-      if (this.id) {
-        this.show.delete = true;
-      }
+      this.show.delete = true;
     },
     handleMouseLeave() {
       this.show.delete = false;
