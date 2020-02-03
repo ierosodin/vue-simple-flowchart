@@ -57,7 +57,7 @@ export default {
     calculateRotation() {
       // calculate arrow rotation
       let deltaX = this.end[0] - this.start[0];
-      deltaX = deltaX > 30 ? deltaX *= 0.2 : deltaX;
+      deltaX = deltaX > 10 ? deltaX *= 0.2 : deltaX;
       let deltaY = this.end[1] - this.start[1];
       const angle = -Math.atan2(deltaX, deltaY);
       const degree = angle * 180 / Math.PI;
