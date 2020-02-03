@@ -10,7 +10,7 @@
     </div>
     <br>
     <div class="flowchart">
-      <h2>
+      <h2 style="overflow-x: auto">
         <nobr
           v-for="(stage, index) in stages"
           :key="index"
