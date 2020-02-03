@@ -20,6 +20,7 @@
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.2.2",
     "vue": "^2.6.11",
+    "vue-click-outside": "^1.0.7",
     "vue2-touch-events": "^2.1.0"
   },
   "devDependencies": {

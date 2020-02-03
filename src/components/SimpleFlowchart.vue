@@ -5,6 +5,7 @@
         v-touch:moving="handleMove" 
         v-touch:end="handleUp"
         v-touch:start="handleDown"
+        v-click-outside="handleUp"
       >
         <flowchart-node
           v-bind.sync="node"
@@ -53,6 +54,7 @@
 import FlowchartLink from './FlowchartLink.vue';
 import FlowchartNode from './FlowchartNode.vue';
 import { getMousePosition } from '../assets/utilty/position';
+import ClickOutside from 'vue-click-outside'
 
 export default {
   name: 'VueFlowchart',
@@ -137,6 +139,9 @@ export default {
   mounted() {
     this.rootDivOffset.top = this.$el ? this.$el.offsetTop : 0;
     this.rootDivOffset.left = this.$el ? this.$el.offsetLeft : 0;
+  },
+  directives: {
+    ClickOutside,
   },
   methods: {
     calStageWidth(index) {
@@ -388,13 +393,11 @@ export default {
     handleUp(e) {
       const target = e.target || e.srcElement;
       // eslint-disable-next-line
-      // console.log('ini dari SimpleFlowchart.vue fungsi handleUp', this.$el);
       if (this.$el.contains(target)) {
         if (typeof target.className !== 'string' || target.className.indexOf('node-input') < 0) {
           this.draggingLink = null;
         }
         if (typeof target.className === 'string' && target.className.indexOf('node-delete') > -1) {
-          // console.log('delete2', this.action.dragging);
           this.nodeDelete(this.action.selected);
         }
       }
@@ -407,7 +410,6 @@ export default {
     },
     handleDown(e) {
       const target = e.target || e.srcElement;
-      // console.log('for scroll', target, e.keyCode, e.which)
       if (target === this.$el || target.matches('line, line *')) {
         this.action.selectedBound = target.id.split('-')[1];
         if (this.action.selectedBound > 0)
