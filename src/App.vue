@@ -72,7 +72,6 @@
             {{ category.name }}
           </b-form-select-option>
         </b-form-select>
-        <b-form-input v-model="newNodeLabel" placeholder="Enter node label"></b-form-input>
         <br>
         <b-button-group>
           <b-button
@@ -115,7 +114,6 @@ export default {
         links: [],
       },
       newNodeType: null,
-      newNodeLabel: '',
       nodeCategory: [
         {
           name: 'nodeType1',
@@ -209,7 +207,7 @@ export default {
         centeredY: this.scene.centerY + 50,
         type: this.nodeCategory[this.newNodeType].name,
         stage: this.nodeCategory[this.newNodeType].stage,
-        label: this.newNodeLabel ? this.newNodeLabel: `test${maxID + 1}`,
+        taskId: `${this.nodeCategory[this.newNodeType].name}_${maxID + 1}`,
         outButtons: this.nodeCategory[this.newNodeType].outButtons,
         stat: stat,
         upStream: [],
@@ -231,13 +229,11 @@ export default {
       e.preventDefault();
       this.addNode('warning');
       this.newNodeType = null;
-      this.newNodeLabel = '';
       this.$refs.createModal.hide();
     },
     onCreateFormReset(e) {
       e.preventDefault();
       this.newNodeType = null;
-      this.newNodeLabel = '';
       this.$refs.createModal.hide();
     },
   }

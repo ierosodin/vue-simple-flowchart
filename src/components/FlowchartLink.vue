@@ -6,7 +6,7 @@
       <text 
         text-anchor="middle" 
         :transform="arrowTransform"
-        font-size="22">&times;</text>
+        font-size="30">&times;</text>
     </a>
     <path v-else d="M -1 -1 L 0 1 L 1 -1 z"
       :style="arrowStyle"
@@ -48,14 +48,14 @@ export default {
     handleMouseLeave() {
       this.show.delete = false;
     },
-    caculateCenterPoint() {
-      // caculate arrow position: the center point between start and end
+    calculateCenterPoint() {
+      // calculate arrow position: the center point between start and end
       const dx = (this.end[0] - this.start[0]) / 2;
       const dy = (this.end[1] - this.start[1]) / 2;
       return [this.start[0] + dx, this.start[1] + dy];
     },
-    caculateRotation() {
-      // caculate arrow rotation
+    calculateRotation() {
+      // calculate arrow rotation
       let deltaX = this.end[0] - this.start[0] - 50;
       let deltaY = this.end[1] - this.start[1];
       const angle = -Math.atan2(deltaX, deltaY);
@@ -82,8 +82,8 @@ export default {
       }
     },
     arrowTransform() {
-      const [arrowX, arrowY] = this.caculateCenterPoint();
-      const degree = this.caculateRotation()
+      const [arrowX, arrowY] = this.calculateCenterPoint();
+      const degree = this.calculateRotation()
       return `translate(${arrowX}, ${arrowY}) rotate(${degree})`;
     },
     dAttr() {

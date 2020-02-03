@@ -258,18 +258,13 @@ export default {
             link.to === index &&
             (link.outButton !== -1 ? link.outButton === this.findNodeWithID(link.from).outButtons[this.draggingLink.buttonIndex].id : true);
         })
-        const nodeFrom = this.scene.nodes.find((node) => {
-          return node.id === this.draggingLink.from;
-        })
-        const nodeTo = this.scene.nodes.find((node) => {
-          return node.id === index;
-        })
-        const valid = nodeFrom.stage <= nodeTo.stage;
+        const fromNode = this.findNodeWithID(this.draggingLink.from);
+        const toNode = this.findNodeWithID(index);
+        const valid = fromNode.stage <= toNode.stage;
         if (!existed && valid) {
           let maxID = Math.max(-1, ...this.scene.links.map((link) => {
             return link.id
           }))
-          const fromNode = this.findNodeWithID(this.draggingLink.from);
           const outputButtonId = fromNode.outButtons && fromNode.outButtons.length ? fromNode.outButtons[this.draggingLink.buttonIndex].id : -1;
           const newLink = {
             id: maxID + 1,
@@ -279,7 +274,7 @@ export default {
           };
           this.scene.links.push(newLink)
           // add link info to node
-          nodeTo.upStream.push({
+          toNode.upStream.push({
             id: this.draggingLink.from,
             button: outputButtonId,
           })
@@ -296,10 +291,8 @@ export default {
         const linkIndex = this.scene.links.findIndex((item) => {
           return item.id === id;
         });
-        const nodeTo = this.scene.nodes.find((item) => {
-          return item.id === this.scene.links[linkIndex].to;
-        });
-        nodeTo.upStream = nodeTo.upStream.filter((item) => {
+        const toNode = this.findNodeWithID(this.scene.links[linkIndex].to)
+        toNode.upStream = toNode.upStream.filter((item) => {
           return (item.id !== this.scene.links[linkIndex].from) || (item.button !== this.scene.links[linkIndex].outButton);
         });
         this.scene.links.splice(linkIndex, 1);
@@ -449,10 +442,8 @@ export default {
     nodeDelete(id) {
       this.scene.links.forEach((link) => {
         if (link.from === id) {
-          let nodeTo = this.scene.nodes.find((node) => {
-            return node.id === link.to;
-          });
-          nodeTo.upStream = nodeTo.upStream.filter((item) => {
+          const toNode = this.findNodeWithID(link.to);
+          toNode.upStream = toNode.upStream.filter((item) => {
             return item.id !== id;
           });
         }

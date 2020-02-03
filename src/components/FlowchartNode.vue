@@ -25,10 +25,10 @@
       </div>
       <div ref="nodeType" :id="'node-type_' + id" v-text="type" class="node-type"></div>
       <div class="node-label" :id="'label_' + id">
-        <div ref="labelTitle" class="node-label-title" :id="'label-title_' + id" v-text="label" />
+        <div ref="labelTitle" class="node-label-title" :id="'label-title_' + id" v-text="taskId" />
         <div v-if="outButtons.length > 0" class="node-buttons" :id="'node-buttons_' + id">
           <div v-for="(button, index) in outButtons" :key="index" :id="'button_' + id + '_' + index" class="node-label-button">
-            <span>{{button.text}}</span>
+            <span>{{ button.text }}</span>
             <div class="node-port node-output" :id="'port_' + id + '_' + index" 
               :style="buttonPortStyle(index)"
               @mousedown="outputMouseDown(index, $event)"
@@ -78,7 +78,7 @@ export default {
       type: String,
       default: 'Default'
     },
-    label: {
+    taskId: {
       type: String,
       default: 'input name'
     },
