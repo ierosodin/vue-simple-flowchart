@@ -2,14 +2,18 @@
   <div>
     <div id="flowchart" class="flowchart">
       <div class="flowchart-container"
-        v-touch:moving="handleMove" 
-        v-touch:end="handleUp"
-        v-touch:start="handleDown"
-        v-mouseup-outside="handleUp"
+        @mouseup="handleMouseUp"
+        @mousedown="handleMouseDown"
+        @mousemove="handleMouseMove"
+        v-mouseup-outside="handleMouseUp"
+        v-touch:moving="handleTouchMove" 
+        v-touch:end="handleTouchUp"
+        v-touch:start="handleTouchDown"
       >
         <flowchart-node
           v-bind.sync="node"
           v-for="(node, index) in scene.nodes"
+          :ref="`node${index}`"
           :key="`node${index}`"
           :options="nodeOptions"
           @linkingStart="linkingStart(node.id, $event)"
@@ -195,7 +199,6 @@ export default {
       }
       let additionalHeight = 0;
       if (node.stat !== null) {
-        const nodeTitleElement = document.getElementsByClassName('node-error')[0];
         additionalHeight += 40;
       }
       if (type === 'right') {
@@ -421,6 +424,36 @@ export default {
         this.action.selected = null; // deselectAll
       }
       this.$emit('canvasClick', e);
+    },
+    handleMouseMove(e) {
+      if (e.type.includes('mouse')) {
+        this.handleMove(e);
+      }
+    },
+    handleMouseUp(e) {
+      if (e.type.includes('mouse')) {
+        this.handleUp(e);
+      }
+    },
+    handleMouseDown(e) {
+      if (e.type.includes('mouse')) {
+        this.handleDown(e);
+      }
+    },
+    handleTouchMove(e) {
+      if (e.type.includes('touch')) {
+        this.handleMove(e);
+      }
+    },
+    handleTouchUp(e) {
+      if (e.type.includes('touch')) {
+        this.handleUp(e);
+      }
+    },
+    handleTouchDown(e) {
+      if (e.type.includes('touch')) {
+        this.handleDown(e);
+      }
     },
     moveSelectedNode(dx, dy) {
       let index = this.scene.nodes.findIndex((item) => {
