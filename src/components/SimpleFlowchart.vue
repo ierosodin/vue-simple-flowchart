@@ -216,11 +216,10 @@ export default {
       if (type === 'right') {
         let buttonIndex = null;
 
-        if (buttonId && buttonId !== -1) {
-          buttonIndex = node.outButtons.findIndex((button) => button.id === buttonId);
-        } else {
+        if (buttonId === -1) {
           return [(x + labelWidth) * this.scene.scale, (y + labelHeight/2 + additionalHeight/2 - 4) * this.scene.scale]
         }
+        buttonIndex = node.outButtons.findIndex((button) => button.id === buttonId);
 
         const nodeTypeElement = document.getElementById(`node-type_${node.id}`);
         if (!nodeTypeElement) { return [0, 0]; }
@@ -237,7 +236,7 @@ export default {
           element = document.getElementById('button_' + node.id + '_' + i);
           if (!element) { continue; }
           if (i === buttonIndex) {
-            buttonHeight += element.offsetHeight/1.75;
+            buttonHeight += element.offsetHeight/1.5;
           } else {
             buttonHeight += element.offsetHeight;
           }

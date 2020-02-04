@@ -167,7 +167,7 @@ export default {
         element = document.getElementById('button_' + this.id + '_' + i);
         if (!element) { continue; }
         if (i === index) {
-          buttonHeight += element.offsetHeight / 1.75;
+          buttonHeight += element.offsetHeight / 1.5;
         } else {
           buttonHeight += element.offsetHeight;
         }
