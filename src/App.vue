@@ -45,6 +45,8 @@
         @linkBreak="linkBreak"
         @linkAdded="linkAdded"
         @canvasClick="canvasClick"
+        :verifyNode="verifyNode"
+        :resetNodeStatFromID="resetNodeStatFromID"
         :stages.sync="stages"
         :height="1200"/>
     </div>
@@ -118,16 +120,19 @@ export default {
         {
           name: 'nodeType1',
           stage: 0,
+          start: true,
           outButtons: [],
         },
         {
           name: 'nodeType2',
           stage: 1,
+          start: false,
           outButtons: [],
         },
         {
           name: 'nodeType3',
           stage: 2,
+          start: false,
           outButtons: [{
             id: 0,
             text: 'Option 1'
@@ -142,21 +147,25 @@ export default {
         {
           name: 'nodeType4',
           stage: 2,
+          start: false,
           outButtons: [],
         },
         {
           name: 'nodeType5',
           stage: 2,
+          start: false,
           outButtons: [],
         },
         {
           name: 'nodeType6',
           stage: 2,
+          start: false,
           outButtons: [],
         },
         {
           name: 'nodeType7',
           stage: 3,
+          start: false,
           outButtons: [],
         },
       ],
@@ -194,6 +203,32 @@ export default {
     }
   },
   methods: {
+    verifyNode(id) {
+      const node = this.findNodeWithID(id);
+      if (node.upStream.length === 0 && !node.start) {
+        node.stat = 'error';
+      } else {
+        node.stat = 'success';
+        node.upStream.forEach((upNode) => {
+          if (this.findNodeWithID(upNode.id).stat !== 'success') node.stat = 'error';
+        });
+      }
+    },
+    resetNodeStatFromID(id) {
+      this.scene.nodes.forEach((node) => {
+        node.upStream.forEach((upNode) => {
+          if (upNode.id === id) {
+            node.stat = 'warning';
+            this.resetNodeStatFromID(node.id);
+          }
+        });
+      });
+    },
+    findNodeWithID(id) {
+      return this.scene.nodes.find((item) => {
+        return id === item.id
+      })
+    },
     canvasClick(e) {
       console.log('canvas Click, event:', e)
     },
@@ -208,6 +243,7 @@ export default {
         type: this.nodeCategory[this.newNodeType].name,
         stage: this.nodeCategory[this.newNodeType].stage,
         taskId: `${this.nodeCategory[this.newNodeType].name}_${maxID + 1}`,
+        start: this.nodeCategory[this.newNodeType].start,
         outButtons: this.nodeCategory[this.newNodeType].outButtons,
         stat: stat,
         upStream: [],

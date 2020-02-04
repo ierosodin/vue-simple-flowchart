@@ -23,9 +23,25 @@
       <div v-else :id="'node-main_' + id" class="node-success">
         <span>Success</span>
       </div>
-      <div ref="nodeType" :id="'node-type_' + id" v-text="type" class="node-type"></div>
+      <div ref="nodeType" :id="'node-type_' + id" class="node-type">
+        {{ type }}
+      </div>
       <div class="node-label" :id="'label_' + id">
-        <div ref="labelTitle" class="node-label-title" :id="'label-title_' + id" v-text="taskId" />
+        <div ref="labelTitle" class="node-label-title" :id="'label-title_' + id">
+          <div class="text-right">
+            <b-button
+              pill
+              variant="outline-success"
+              @click="onVerifyNode"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'check']"
+                size="sm"
+              />
+            </b-button>
+          </div>
+          {{ taskId }}
+        </div>
         <div v-if="outButtons.length > 0" class="node-buttons" :id="'node-buttons_' + id">
           <div v-for="(button, index) in outButtons" :key="index" :id="'button_' + id + '_' + index" class="node-label-button">
             <span>{{ button.text }}</span>
@@ -170,8 +186,10 @@ export default {
     },
     handleMousedown(e) {
       const target = e.target || e.srcElement;
-      if (target.className.indexOf('node-input') < 0 && target.className.indexOf('node-output') < 0) {
-        this.$emit('nodeSelected', e);
+      if (!(target.matches('svg, svg *') || target.matches('button'))) {
+        if (target.className.indexOf('node-input') < 0 && target.className.indexOf('node-output') < 0) {
+          this.$emit('nodeSelected', e);
+        }
       }
       if (e.type.includes('mouse')) {
         e.preventDefault();
@@ -220,6 +238,9 @@ export default {
       if (e.type.includes('mouse')) {
         e.preventDefault();
       }
+    },
+    onVerifyNode() {
+      this.$emit('verifyNode')
     },
   }
 }

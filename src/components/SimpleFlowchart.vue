@@ -2,12 +2,11 @@
   <div>
     <div id="flowchart" class="flowchart">
       <div class="flowchart-container"
-        @mouseup="handleMouseUp"
         @mousedown="handleMouseDown"
         @mousemove="handleMouseMove"
-        v-mouseup-outside="handleMouseUp"
+        v-mouseup-outside="handleUp"
         v-touch:moving="handleTouchMove" 
-        v-touch:end="handleTouchUp"
+        v-touch:end="handleUp"
         v-touch:start="handleTouchDown"
       >
         <flowchart-node
@@ -18,7 +17,8 @@
           :options="nodeOptions"
           @linkingStart="linkingStart(node.id, $event)"
           @linkingStop="linkingStop(node.id)"
-          @nodeSelected="nodeSelected(node.id, $event)">
+          @nodeSelected="nodeSelected(node.id, $event)"
+          @verifyNode="verifyNode(node.id)">
         </flowchart-node>
         <svg width="100%" :height="`${height}px`">
           <flowchart-link v-bind.sync="link"
@@ -82,6 +82,18 @@ export default {
       type: Object,
       default() {
         return {}
+      }
+    },
+    verifyNode: {
+      type: Function,
+      default() {
+        return null
+      }
+    },
+    resetNodeStatFromID: {
+      type: Function,
+      default() {
+        return null
       }
     },
   },
@@ -295,10 +307,14 @@ export default {
         const linkIndex = this.scene.links.findIndex((item) => {
           return item.id === id;
         });
+        // update upstream info for all downstream nodes
         const toNode = this.findNodeWithID(this.scene.links[linkIndex].to)
         toNode.upStream = toNode.upStream.filter((item) => {
           return (item.id !== this.scene.links[linkIndex].from) || (item.button !== this.scene.links[linkIndex].outButton);
         });
+        // update stat for all downstream nodes
+        toNode.stat = 'warning';
+        this.resetNodeStatFromID(this.scene.links[linkIndex].to);
         this.scene.links.splice(linkIndex, 1);
         this.$emit('linkBreak', deletedLink);
       }
@@ -430,11 +446,6 @@ export default {
         this.handleMove(e);
       }
     },
-    handleMouseUp(e) {
-      if (e.type.includes('mouse')) {
-        this.handleUp(e);
-      }
-    },
     handleMouseDown(e) {
       if (e.type.includes('mouse')) {
         this.handleDown(e);
@@ -443,11 +454,6 @@ export default {
     handleTouchMove(e) {
       if (e.type.includes('touch')) {
         this.handleMove(e);
-      }
-    },
-    handleTouchUp(e) {
-      if (e.type.includes('touch')) {
-        this.handleUp(e);
       }
     },
     handleTouchDown(e) {
@@ -479,9 +485,12 @@ export default {
           });
         }
       });
-      this.scene.links = this.scene.links.filter((link) => {
-        return link.from !== id && link.to !== id
-      })
+      const removeList = this.scene.links.filter((link) => {
+        return link.from === id || link.to === id
+      });
+      removeList.forEach((link) => {
+        this.linkDelete(link.id);
+      });
       this.scene.nodes = this.scene.nodes.filter((node) => {
         return node.id !== id;
       })

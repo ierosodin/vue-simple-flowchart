@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
     faArrowRight,
+    faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import App from './App.vue'
@@ -31,6 +32,7 @@ Vue.use(Vue2TouchEvents)
 Vue.use(vOutsideEvents)
 
 library.add(faArrowRight);
+library.add(faCheck);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 new Vue({
