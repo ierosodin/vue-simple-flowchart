@@ -293,6 +293,8 @@ export default {
             id: this.draggingLink.from,
             button: outputButtonId,
           })
+          toNode.stat = 'warning';
+          this.resetNodeStatFromID(index);
           this.$emit('linkAdded', newLink)
         }
       }
