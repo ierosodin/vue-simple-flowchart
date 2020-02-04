@@ -345,11 +345,12 @@ $portSize: 16;
     transform: translateY(-50%);
     border: 1px solid #ccc;
     border-radius: 100px;
-    background: #8492a6;
-    opacity: 0.8;
+    background: #{$themeColor};
+    opacity: 0.9;
     &:hover {
-      background: $themeColor;
-      border: 1px solid $themeColor;
+      background: #ff0000;
+      opacity: 0.9;
+      border: 1px solid rgba(255, 0, 0, 0.9);
     }
     &.node-port-tag {
       margin-top: 17px;
@@ -367,17 +368,20 @@ $portSize: 16;
     position: absolute;
     right: -10px;
     top: -10px;
-    font-size: 15px;
-    width: 20px;
-    height: 20px;
-    color: $themeColor;
+    font-size: 16px;
+    font-weight: 900;
+    width: 22px;
+    height: 22px;
+    color: red;
     cursor: pointer;
-    background: white;
-    border: 1px solid $themeColor;
+    background: while;
+    opacity: 0.9;
+    border: 1px solid red;
     border-radius: 100px;
     text-align: center;
     &:hover{
-      background: $themeColor;
+      border: 1px solid rgba(255, 0, 0, 0.9);
+      background: rgba(255, 0, 0, 0.9);
       color: white;
     }
   }

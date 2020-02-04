@@ -1,15 +1,16 @@
 <template>
   <g @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave">
-    <path :d="dAttr" :style="pathStyle"></path>
+    <path :d="dAttr" class="path-style"></path>
     <a v-if="show.delete" @click="deleteLink">
       <text 
         text-anchor="middle" 
         :transform="arrowTransform"
+        class="times-style"
         font-size="30">&times;</text>
     </a>
     <path v-else d="M -1 -1 L 0 1 L 1 -1 z"
-      :style="arrowStyle"
+      class="arrow-style"
       :transform="arrowTransform"></path>
   </g>
 </template>
@@ -68,20 +69,6 @@ export default {
     }
   },
   computed: {
-    pathStyle() {
-      return {
-        stroke: '#8492a6',
-        strokeWidth: 2.73205,
-        fill: 'none'
-      }
-    },
-    arrowStyle() {
-      return {
-        stroke: '#8492a6',
-        strokeWidth: 5.73205,
-        fill: 'none',
-      }
-    },
     arrowTransform() {
       const [arrowX, arrowY] = this.calculateCenterPoint();
       const degree = this.calculateRotation()
@@ -99,7 +86,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
+$themeColor: rgb(120, 120, 120);
 g {
   cursor: pointer;
+}
+.path-style {
+  stroke: #{$themeColor};
+  opacity: 0.9;
+  stroke-width: 3;
+  fill: none;
+}
+.times-style {
+  stroke: #ff0000;
+  opacity: 0.9;
+  stroke-width: 2;
+  fill: none;
+}
+.arrow-style {
+  stroke: #{$themeColor};
+  opacity: 0.9;
+  stroke-width: 6;
+  fill: none;
 }
 </style>
