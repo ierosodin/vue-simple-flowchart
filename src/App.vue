@@ -66,9 +66,8 @@
         <b-form-select v-model="newNodeType" class="mb-3" required>
           <b-form-select-option :value="null" disabled>Please select a node type</b-form-select-option>
           <b-form-select-option
-            v-for="(category, index) in nodeCategory"
+            v-for="(category, index) in nodeInStage(parseInt(newStageType))"
             :key="'category-' + index"
-            v-if="category.stage === parseInt(newStageType)"
             :value="index"
           >
             {{ category.name }}
@@ -203,6 +202,11 @@ export default {
     }
   },
   methods: {
+    nodeInStage(stage) {
+      return this.nodeCategory.filter((category) => {
+        return category.stage === stage;
+      });
+    },
     verifyNode(id) {
       const node = this.findNodeWithID(id);
       if (node.upStream.length === 0 && !node.start) {
@@ -230,36 +234,42 @@ export default {
       })
     },
     canvasClick(e) {
-      console.log('canvas Click, event:', e)
+      // console.log('canvas Click, event:', e)
+      return
     },
     addNode(stat) {
       let maxID = Math.max(-1, ...this.scene.nodes.map((node) => {
         return node.id;
       }))
+      const stageNodeCategory = this.nodeInStage(parseInt(this.newStageType))
       this.scene.nodes.push({
         id: maxID + 1,
-        centeredX: this.stages[this.nodeCategory[this.newNodeType].stage].width / this.scene.scale,
+        centeredX: this.stages[stageNodeCategory[this.newNodeType].stage].width / this.scene.scale,
         centeredY: this.scene.centerY + 50,
-        type: this.nodeCategory[this.newNodeType].name,
-        stage: this.nodeCategory[this.newNodeType].stage,
-        taskId: `${this.nodeCategory[this.newNodeType].name}_${maxID + 1}`,
-        start: this.nodeCategory[this.newNodeType].start,
-        outButtons: this.nodeCategory[this.newNodeType].outButtons,
+        type: stageNodeCategory[this.newNodeType].name,
+        stage: stageNodeCategory[this.newNodeType].stage,
+        taskId: `${stageNodeCategory[this.newNodeType].name}_${maxID + 1}`,
+        start: stageNodeCategory[this.newNodeType].start,
+        outButtons: stageNodeCategory[this.newNodeType].outButtons,
         stat: stat,
         upStream: [],
       })
     },
     nodeClick(id) {
-      console.log('node click', id);
+      // console.log('node click', id);
+      return
     },
     nodeDelete(id) {
-      console.log('node delete', id);
+      // console.log('node delete', id);
+      return
     },
     linkBreak(id) {
-      console.log('link break', id);
+      // console.log('link break', id);
+      return
     },
     linkAdded(link) {
-      console.log('new link added:', link);
+      // console.log('new link added:', link);
+      return
     },
     onCreateFormSubmit(e) {
       e.preventDefault();
