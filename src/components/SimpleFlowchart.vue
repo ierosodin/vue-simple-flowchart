@@ -33,7 +33,7 @@
             :x1="calStageWidth(index)"
             y1="0"
             :x2="calStageWidth(index)"
-            y2="100vh"
+            y2="100%"
             style="stroke: rgb(100, 100, 100); stroke-width: 6; cursor: col-resize"
             stroke-dasharray="20, 20"
           />
@@ -41,7 +41,7 @@
             v-for="(stage, index) in stages"
             :key="'text-' + index"
             :x="calStageWidth(index) + 50 * scene.scale"
-            y="50"
+            y="5%"
             textLength="100"
             lengthAdjust="spacing"
             style="font-size: 24px;"
