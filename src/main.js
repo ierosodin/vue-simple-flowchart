@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vue2TouchEvents from 'vue2-touch-events'
+import vOutsideEvents from 'vue-outside-events'
 import {
     LayoutPlugin, InputGroupPlugin, FormPlugin, FormGroupPlugin, FormInputPlugin,
     FormCheckboxPlugin, FormSelectPlugin, ButtonPlugin, ButtonGroupPlugin, ModalPlugin,
@@ -27,6 +28,7 @@ Vue.use(ModalPlugin);
 Vue.use(PopoverPlugin);
 Vue.use(NavbarPlugin);
 Vue.use(Vue2TouchEvents)
+Vue.use(vOutsideEvents)
 
 library.add(faArrowRight);
 Vue.component('font-awesome-icon', FontAwesomeIcon);

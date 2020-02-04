@@ -5,7 +5,7 @@
         v-touch:moving="handleMove" 
         v-touch:end="handleUp"
         v-touch:start="handleDown"
-        v-click-outside="handleUp"
+        v-mouseup-outside="handleUp"
       >
         <flowchart-node
           v-bind.sync="node"
@@ -54,7 +54,6 @@
 import FlowchartLink from './FlowchartLink.vue';
 import FlowchartNode from './FlowchartNode.vue';
 import { getMousePosition } from '../assets/utilty/position';
-import ClickOutside from 'vue-click-outside'
 
 export default {
   name: 'VueFlowchart',
@@ -139,9 +138,6 @@ export default {
   mounted() {
     this.rootDivOffset.top = this.$el ? this.$el.offsetTop : 0;
     this.rootDivOffset.left = this.$el ? this.$el.offsetLeft : 0;
-  },
-  directives: {
-    ClickOutside,
   },
   methods: {
     calStageWidth(index) {

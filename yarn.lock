@@ -6843,11 +6843,6 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-click-outside@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/vue-click-outside/-/vue-click-outside-1.0.7.tgz#cdd2b1605e3c4944784e1794eae4a12a0f700bd6"
-  integrity sha1-zdKxYF48SUR4TheU6uShKg9wC9Y=
-
 vue-eslint-parser@^2.0.3:
   version "2.0.3"
   resolved "http://registry.npm.taobao.org/vue-eslint-parser/download/vue-eslint-parser-2.0.3.tgz#c268c96c6d94cfe3d938a5f7593959b0ca3360d1"
@@ -6877,6 +6872,11 @@ vue-loader@^15.3.0:
     loader-utils "^1.1.0"
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
+
+vue-outside-events@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/vue-outside-events/-/vue-outside-events-1.1.3.tgz#75b3e3b7856590fbe4455c87075b54f92b2a9654"
+  integrity sha512-8FZqTRy3JUd1L/CFDoUPpuk4uM3piWFX1EixgKp4E3iOwDZfDHZVsnPYORbazs41XFB5u1EVPUOzbrR8iI4ImQ==
 
 vue-style-loader@^4.1.0:
   version "4.1.2"
