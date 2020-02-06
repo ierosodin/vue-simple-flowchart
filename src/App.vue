@@ -96,7 +96,9 @@
       :direction="'left'"
       :exist="true"
       v-for="node in scene.nodes"
-      :ref="'drawer_' + node.id">
+      :key="'drawer_' + node.id"
+      :ref="'drawer_' + node.id"
+    >
       {{ node.id }}
     </Drawer>
   </div>

@@ -251,7 +251,7 @@
     height: 100%;
     top: 0px;
     transition: transform 0.3s ease;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.9);
     width: 60%;
     overflow-y: auto;
     overflow-x: hidden;
