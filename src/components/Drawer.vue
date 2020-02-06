@@ -177,9 +177,9 @@
       },
       close() {
         if (this.direction == 'left') {
-          this.translate = '-' + this.element.offsetWidth + 'px';
+          this.translate = '-' + window.screen.width + 'px';
         } else {
-          this.translate = this.element.offsetWidth + 'px';
+          this.translate = window.screen.width + 'px';
         }
         this.element.style.transform = 'translate3d(' + this.translate + ',0,0)';
         this.element.style.transitionDuration = this.auto_speed;
@@ -188,7 +188,6 @@
         this.unlock(document.querySelector('body'));
         this.element.classList.remove('active');
         this.active = false;
-
       },
       speed(e) {
         let time = new Date().getTime() - this.startTime;
