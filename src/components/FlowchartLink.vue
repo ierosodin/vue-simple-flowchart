@@ -97,10 +97,9 @@ g {
   fill: none;
 }
 .times-style {
-  stroke: #ff0000;
-  opacity: 0.9;
+  stroke: rgba(255, 0, 0, 0.9);
   stroke-width: 2;
-  fill: none;
+  fill: rgba(255, 0, 0, 0.9);
 }
 .arrow-style {
   stroke: #{$themeColor};
