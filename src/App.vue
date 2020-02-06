@@ -46,6 +46,7 @@
         @linkAdded="linkAdded"
         @canvasClick="canvasClick"
         :verifyNode="verifyNode"
+        :openDrawer="openDrawer"
         :resetNodeStatFromID="resetNodeStatFromID"
         :stages.sync="stages"
         :height="1200"/>
@@ -91,17 +92,26 @@
         </b-button-group>
       </b-form>
     </b-modal>
+    <Drawer
+      :direction="'left'"
+      :exist="true"
+      v-for="node in scene.nodes"
+      :ref="'drawer_' + node.id">
+      {{ node.id }}
+    </Drawer>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
 import SimpleFlowchart from './components/SimpleFlowchart.vue'
+import Drawer from './components/Drawer.vue'
 
 export default {
   name: 'app',
   components: {
-    SimpleFlowchart
+    SimpleFlowchart,
+    Drawer,
   },
   data() {
     return {
@@ -281,6 +291,13 @@ export default {
       e.preventDefault();
       this.newNodeType = null;
       this.$refs.createModal.hide();
+    },
+    openDrawer(id) {
+      if (this.$refs["drawer_" + id][0].active) {
+        this.$refs["drawer_" + id][0].close();          
+      } else {
+        this.$refs["drawer_" + id][0].open();
+      }
     },
   }
 }

@@ -39,6 +39,17 @@
                 size="sm"
               />
             </b-button>
+            &nbsp;
+            <b-button
+              pill
+              variant="outline-success"
+              @click="onOpenDrawer"
+            >
+              <font-awesome-icon
+                :icon="['fas', 'cog']"
+                size="sm"
+              />
+            </b-button>
           </div>
           {{ taskId }}
         </div>
@@ -241,6 +252,9 @@ export default {
     },
     onVerifyNode() {
       this.$emit('verifyNode')
+    },
+    onOpenDrawer() {
+      this.$emit('openDrawer')
     },
   }
 }

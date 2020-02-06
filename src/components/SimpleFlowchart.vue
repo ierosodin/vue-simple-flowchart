@@ -18,7 +18,9 @@
           @linkingStart="linkingStart(node.id, $event)"
           @linkingStop="linkingStop(node.id)"
           @nodeSelected="nodeSelected(node.id, $event)"
-          @verifyNode="verifyNode(node.id)">
+          @verifyNode="verifyNode(node.id)"
+          @openDrawer="openDrawer(node.id)"
+        >
         </flowchart-node>
         <svg width="100%" :height="`${height}px`">
           <flowchart-link v-bind.sync="link"
@@ -91,6 +93,12 @@ export default {
       }
     },
     resetNodeStatFromID: {
+      type: Function,
+      default() {
+        return null
+      }
+    },
+    openDrawer: {
       type: Function,
       default() {
         return null
