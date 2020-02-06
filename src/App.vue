@@ -254,7 +254,7 @@ export default {
         node.upStream.forEach((upNode) => {
           if (upNode.id === id) {
             node.stat = stat;
-            this.resetNodeStatFromNodeID(node.id);
+            this.resetNodeStatFromID(node.id);
           }
         });
       });
