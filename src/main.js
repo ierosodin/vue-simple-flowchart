@@ -4,7 +4,7 @@ import vOutsideEvents from 'vue-outside-events'
 import {
     LayoutPlugin, InputGroupPlugin, FormPlugin, FormGroupPlugin, FormInputPlugin,
     FormCheckboxPlugin, FormSelectPlugin, ButtonPlugin, ButtonGroupPlugin, ModalPlugin,
-    PopoverPlugin, NavbarPlugin,
+    PopoverPlugin, NavbarPlugin, JumbotronPlugin,
 } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -29,6 +29,8 @@ Vue.use(ButtonGroupPlugin);
 Vue.use(ModalPlugin);
 Vue.use(PopoverPlugin);
 Vue.use(NavbarPlugin);
+Vue.use(JumbotronPlugin)
+
 Vue.use(Vue2TouchEvents)
 Vue.use(vOutsideEvents)
 

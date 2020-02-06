@@ -51,7 +51,7 @@
               />
             </b-button>
           </div>
-          {{ taskId }}
+          {{ label }}
         </div>
         <div v-if="outButtons.length > 0" class="node-buttons" :id="'node-buttons_' + id">
           <div v-for="(button, index) in outButtons" :key="index" :id="'button_' + id + '_' + index" class="node-label-button">
@@ -105,9 +105,9 @@ export default {
       type: String,
       default: 'Default'
     },
-    taskId: {
+    label: {
       type: String,
-      default: 'input name'
+      default: 'node id: '
     },
     options: {
       type: Object,

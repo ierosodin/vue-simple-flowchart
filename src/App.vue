@@ -47,7 +47,7 @@
         @canvasClick="canvasClick"
         :verifyNode="verifyNode"
         :openDrawer="openDrawer"
-        :resetNodeStatFromNodeID="resetNodeStatFromNodeID"
+        :resetNodeStatFromID="resetNodeStatFromID"
         :stages.sync="stages"
         :height="1200"/>
     </div>
@@ -99,7 +99,25 @@
       :key="'drawer_' + node.id"
       :ref="'drawer_' + node.id"
     >
-      {{ node.id }}
+      <div>
+        <b-jumbotron
+          :fluid=true
+          :header-level=4
+          :style="{background: 'rgba(0, 0, 0, 0)'}"
+          class="text-left"
+        >
+          <template v-slot:header>
+            Node ID: {{ node.id }}
+          </template>
+          <template v-slot:lead>
+            Stage: {{ stages[node.stage].name }}
+            <br>
+            Type: {{ node.type }}
+          </template>
+          <hr class="my-4">
+          <b-button variant="success" @click="verifyNode(node.id)">Run node</b-button>
+        </b-jumbotron>
+      </div>
     </Drawer>
   </div>
 </template>
@@ -223,7 +241,7 @@ export default {
       const node = this.findNodeWithID(id);
       if (node.upStream.length === 0 && !node.start) {
         node.stat = 'error';
-        this.resetNodeStatFromNodeID(node.id, 'error')
+        this.resetNodeStatFromID(node.id, 'error')
       } else {
         node.stat = 'success';
         node.upStream.forEach((upNode) => {
@@ -231,10 +249,10 @@ export default {
         });
       }
     },
-    resetNodeStatFromNodeID(nodeId, stat='warning') {
+    resetNodeStatFromID(id, stat='warning') {
       this.scene.nodes.forEach((node) => {
         node.upStream.forEach((upNode) => {
-          if (upNode.id === nodeId) {
+          if (upNode.id === id) {
             node.stat = stat;
             this.resetNodeStatFromNodeID(node.id);
           }
@@ -261,11 +279,12 @@ export default {
         centeredY: this.scene.centerY + 50,
         type: stageNodeCategory[this.newNodeType].name,
         stage: stageNodeCategory[this.newNodeType].stage,
-        taskId: `${stageNodeCategory[this.newNodeType].name}_${maxID + 1}`,
+        label: `node id: ${maxID + 1}`,
         start: stageNodeCategory[this.newNodeType].start,
         outButtons: stageNodeCategory[this.newNodeType].outButtons,
         stat: stat,
         upStream: [],
+        param: {},
       })
     },
     nodeClick(id) {
