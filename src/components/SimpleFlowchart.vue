@@ -283,7 +283,7 @@ export default {
         })
         const fromNode = this.findNodeWithID(this.draggingLink.from);
         const toNode = this.findNodeWithID(index);
-        const valid = fromNode.stage <= toNode.stage;
+        const valid = Math.abs(fromNode.stage - toNode.stage) <= 1;
         if (!existed && valid) {
           let maxID = Math.max(-1, ...this.scene.links.map((link) => {
             return link.id
@@ -295,12 +295,17 @@ export default {
             to: index,
             outButton: outputButtonId,
           };
-          this.scene.links.push(newLink)
           // add link info to node
           toNode.upStream.push({
             id: this.draggingLink.from,
             button: outputButtonId,
           })
+          if (this.cyclicExist()) {
+            toNode.upStream.pop();
+            this.draggingLink = null;
+            return;
+          }
+          this.scene.links.push(newLink);
           toNode.stat = 'warning';
           this.resetNodeStatFromID(index);
           this.$emit('linkAdded', newLink)
@@ -327,6 +332,33 @@ export default {
         this.scene.links.splice(linkIndex, 1);
         this.$emit('linkBreak', deletedLink);
       }
+    },
+    cyclicExist() {
+      let Q = [];
+      let E = [];
+      this.scene.nodes.forEach((node) => {
+        if (node.upStream.length < 1)
+          Q.push(Object.assign({}, node));
+        else
+          E.push(Object.assign({}, node));
+      });
+      while (Q.length > 0) {
+        const QNode = Q.pop();
+        let newE = [];
+        E.forEach((node) => {
+          node.upStream = node.upStream.filter((upNode) => {
+            return upNode.id !== QNode.id;
+          });
+          if (node.upStream.length < 1)
+            Q.push(node);
+          else
+            newE.push(node);
+        });
+        E = newE;
+      }
+      if (E.length > 0)
+        return true;
+      return false;
     },
     nodeSelected(id, e) {
       this.action.dragging = true;
