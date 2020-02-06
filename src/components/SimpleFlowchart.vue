@@ -92,7 +92,7 @@ export default {
         return null
       }
     },
-    resetNodeStatFromID: {
+    resetNodeStatFromNodeID: {
       type: Function,
       default() {
         return null
@@ -302,7 +302,7 @@ export default {
             button: outputButtonId,
           })
           toNode.stat = 'warning';
-          this.resetNodeStatFromID(index);
+          this.resetNodeStatFromNodeID(index);
           this.$emit('linkAdded', newLink)
         }
       }
@@ -323,7 +323,7 @@ export default {
         });
         // update stat for all downstream nodes
         toNode.stat = 'warning';
-        this.resetNodeStatFromID(this.scene.links[linkIndex].to);
+        this.resetNodeStatFromNodeID(this.scene.links[linkIndex].to);
         this.scene.links.splice(linkIndex, 1);
         this.$emit('linkBreak', deletedLink);
       }

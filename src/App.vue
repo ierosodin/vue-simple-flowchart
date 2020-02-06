@@ -47,7 +47,7 @@
         @canvasClick="canvasClick"
         :verifyNode="verifyNode"
         :openDrawer="openDrawer"
-        :resetNodeStatFromID="resetNodeStatFromID"
+        :resetNodeStatFromNodeID="resetNodeStatFromNodeID"
         :stages.sync="stages"
         :height="1200"/>
     </div>
@@ -223,6 +223,7 @@ export default {
       const node = this.findNodeWithID(id);
       if (node.upStream.length === 0 && !node.start) {
         node.stat = 'error';
+        this.resetNodeStatFromNodeID(node.id, 'error')
       } else {
         node.stat = 'success';
         node.upStream.forEach((upNode) => {
@@ -230,12 +231,12 @@ export default {
         });
       }
     },
-    resetNodeStatFromID(id) {
+    resetNodeStatFromNodeID(nodeId, stat='warning') {
       this.scene.nodes.forEach((node) => {
         node.upStream.forEach((upNode) => {
-          if (upNode.id === id) {
-            node.stat = 'warning';
-            this.resetNodeStatFromID(node.id);
+          if (upNode.id === nodeId) {
+            node.stat = stat;
+            this.resetNodeStatFromNodeID(node.id);
           }
         });
       });
